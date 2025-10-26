@@ -2,6 +2,7 @@ import 'package:dicionario/Config/model/Post_model.dart';
 import 'package:dicionario/DS/Components/Button/ButtonNavigation/Button_navigation_bar.dart';
 import 'package:dicionario/DS/Components/Button/ButtonNavigation/Button_navigation_bar_view_model.dart';
 import 'package:dicionario/DS/Components/appBar/Custom_appBar.dart';
+import 'package:dicionario/view/Add_widget.dart';
 import 'package:dicionario/view/Detail_widget.dart';
 import 'package:dicionario/view/Favorite_widget.dart';
 import 'package:dicionario/view/Home_widget.dart';
@@ -17,17 +18,20 @@ class _PageHomeState extends State<PageHome> {
   int _selectedIndex = 0;
   PostModel? _selectedTermo;
   bool _isShowingFavorites = false;
+  bool _isShowingAdd = false;
 
   final List<ButtonNavigationBarViewModel> _bottomNavItems = [
     ButtonNavigationBarViewModel(name: 'Home', icon: Icons.home),
     ButtonNavigationBarViewModel(name: 'Favoritos', icon: Icons.favorite),
+     ButtonNavigationBarViewModel(name: 'Criar', icon: Icons.add),
   ];
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
       _selectedTermo = null;
-      _isShowingFavorites = false;
+      _isShowingFavorites = index == 1;
+      _isShowingAdd = index == 2;
 
     });
   }
@@ -36,6 +40,8 @@ class _PageHomeState extends State<PageHome> {
     setState(() {
       _selectedTermo = termo;
       _isShowingFavorites = false;
+      _isShowingAdd = false;
+      _selectedIndex = 0;
     });
   }
 
@@ -43,6 +49,8 @@ class _PageHomeState extends State<PageHome> {
     setState(() {
       _isShowingFavorites = true;
       _selectedTermo = null;
+      _isShowingAdd = false;
+      _selectedIndex = 1;
     });
   }
 
@@ -53,6 +61,10 @@ class _PageHomeState extends State<PageHome> {
     if (_isShowingFavorites || _selectedIndex == 1) {
       return FavorictWidget(onTermoSelected: _showTermoDetail,);
     }
+    if (_isShowingAdd || _selectedIndex == 2){
+      return const AddWidget();
+    }
+   
     return HomeWidget(
       onTermoSelected: _showTermoDetail,
     );

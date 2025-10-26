@@ -14,6 +14,41 @@ class FavoriteService with ChangeNotifier {
     loadFavorites();
   }
 
+  Future<List<PostModel>> fetchFavorites({String? topico}) async {
+    try {
+      final db = await _database;
+      List<Map<String, dynamic>> maps;
+      if (topico != null && topico.isNotEmpty && topico != 'Todas') {
+        maps = await db.query(
+          'favorites',
+          where: 'topico LIKE ?',
+          whereArgs: ['%$topico%'],
+        );
+      } else {
+        maps = await db.query('favorites');
+      }
+      return maps.map((e) => PostModel.fromJson(e)).toList();
+    } catch (e, st) {
+      debugPrint('fetchFavorites error: $e\n$st');
+      return [];
+    }
+  }
+
+  Future<List<String>> getFavoriteTopics() async {
+    try {
+      final db = await _database;
+      final rows = await db.rawQuery('SELECT DISTINCT topico FROM favorites ORDER BY topico COLLATE NOCASE');
+      final topics = rows
+          .map((r) => (r['topico'] ?? '').toString())
+          .where((s) => s.isNotEmpty)
+          .toList();
+      return topics;
+    } catch (e, st) {
+      debugPrint('getFavoriteTopics error: $e\n$st');
+      return [];
+    }
+  }
+
   Future<void> loadFavorites() async {
     _isLoading = true;
     notifyListeners();

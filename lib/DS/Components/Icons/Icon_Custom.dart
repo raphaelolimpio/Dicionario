@@ -87,6 +87,9 @@ class IconCustom extends StatelessWidget {
         break;
       case colorType.darkblue:
         iconColor = ThemeCardIconColorDarkblue;
+        break;
+      case colorType.cyan:
+      iconColor = ThemeCardIconColorCyab;
     }
 
     return Icon(iconData, size: iconSize, color: iconColor);

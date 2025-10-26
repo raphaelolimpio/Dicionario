@@ -1,6 +1,7 @@
 import 'package:dicionario/Config/model/Post_model.dart';
 import 'package:dicionario/DS/Components/Card/model/card_custom2/Card_custom2.dart';
 import 'package:dicionario/DS/Components/Card/model/card_custom2/Card_custom2_view_model.dart';
+import 'package:dicionario/DS/Components/Icons/Icon_view_Model.dart';
 import 'package:flutter/material.dart';
 
 class DetalWidget extends StatelessWidget {
@@ -19,6 +20,37 @@ class DetalWidget extends StatelessWidget {
       comando_exemplo: termo.comando_exemplo ?? '',
       explicacao_pratica: termo.explicacao_pratica ?? '',
       dicas_de_uso: termo.dicas_de_uso ?? '',
+
+      topicoIcon: IconViewModel(
+        icon: IconType.fixed,
+        color: colorType.darkblue,
+        size: IconSize.medium,
+      ),
+       categorIcon: IconViewModel(
+              icon: IconType.folder,
+              color: colorType.yellow,
+              size: IconSize.medium,
+            ),
+            definicaoIcon: IconViewModel(
+              icon: IconType.definition,
+              color: colorType.pink,
+              size: IconSize.medium,
+            ),
+            comandoExemploIcon: IconViewModel( 
+              icon: IconType.bash,
+              color: colorType.green,
+              size: IconSize.medium,
+            ),
+            explicacaoPraticaIcon: IconViewModel( 
+              icon: IconType.dialog, 
+              color: colorType.cyan,
+              size: IconSize.medium,
+            ),
+            dicasDeUsoIcon: IconViewModel( 
+              icon: IconType.dica, 
+              color: colorType.orange,
+              size: IconSize.medium,
+            ),
     );
     return SingleChildScrollView(
       child: Padding(

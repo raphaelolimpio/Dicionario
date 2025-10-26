@@ -35,6 +35,7 @@ const ThemeCardIconColorpink = Color(0xFFE91E63);
 const ThemeCardIconColororange = Color(0xFFFF9800);
 const ThemeCardIconColorgreen = Color(0xFF4CAF50);
 const ThemeCardIconColorDarkblue = Color.fromARGB(255, 5, 68, 119);
+const ThemeCardIconColorCyab = Color.fromARGB(255, 82, 176, 219);
 
 //color bash
 const BashBackgroundColor = Color(0xFF2d2d2d);

@@ -15,6 +15,7 @@ class IconTextFormFieldRow extends StatelessWidget {
   final bool enabled;
   final bool requiredField;
 
+final autoGrow;
   const IconTextFormFieldRow({
     Key? key,
     this.iconModel,
@@ -28,6 +29,7 @@ class IconTextFormFieldRow extends StatelessWidget {
     this.keyboardType = TextInputType.text,
     this.enabled = true,
     this.requiredField = false,
+    this.autoGrow = false,
   }) : super(key: key);
 
   @override
@@ -41,6 +43,10 @@ class IconTextFormFieldRow extends StatelessWidget {
       fontWeight: FontWeight.bold,
       color: Colors.black87,
     );
+
+    final effectiveKeyboard = autoGrow ? TextInputType.multiline : keyboardType;
+    final effectiveMaxLines = autoGrow ? null : maxLines;
+    final effectiveMinLines = autoGrow ? 1 : (maxLines > 1 ? 1 : null);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
@@ -69,8 +75,9 @@ class IconTextFormFieldRow extends StatelessWidget {
               border: const OutlineInputBorder(),
               contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             ),
-            maxLines: maxLines,
-            keyboardType: keyboardType,
+            maxLines: effectiveMaxLines,
+            minLines: effectiveMinLines,
+            keyboardType: effectiveKeyboard,
             enabled: enabled,
             validator: (value) {
               if (requiredField && (value == null || value.trim().isEmpty)) {

@@ -1,6 +1,8 @@
 import 'package:dicionario/Config/model/Post_model.dart';
 import 'package:dicionario/DS/Components/Card/model/Card_custom4/Card_custm4_view_model.dart';
 import 'package:dicionario/DS/Components/IconText/Icon_Text.dart';
+import 'package:dicionario/DS/Components/Icons/Icon_Custom.dart';
+import 'package:dicionario/DS/Components/Icons/Icon_view_Model.dart';
 import 'package:dicionario/DS/Components/codeBlockForm/Code_block_form_field.dart';
 import 'package:dicionario/DS/Components/IconTextForm/icon_text_form_field_row.dart';
 import 'package:dicionario/shared/color.dart';
@@ -8,9 +10,15 @@ import 'package:flutter/material.dart';
 
 class CardCustom4 extends StatefulWidget {
   final CardCustom4ViewModel viewModel;
+  final List<String> topicos;
   final double? cardWidth;
 
-  const CardCustom4({super.key, required this.viewModel, this.cardWidth});
+  const CardCustom4({
+    super.key,
+    required this.viewModel,
+    this.cardWidth,
+    required this.topicos,
+  });
 
   @override
   State<CardCustom4> createState() => CardCustom4State();
@@ -18,7 +26,6 @@ class CardCustom4 extends StatefulWidget {
 
 class CardCustom4State extends State<CardCustom4> {
   final _formKey = GlobalKey<FormState>();
-  late TextEditingController _topicoController;
   late TextEditingController _nomeController;
   late TextEditingController _categoriaController;
   late TextEditingController _definicaoController;
@@ -26,13 +33,13 @@ class CardCustom4State extends State<CardCustom4> {
   late TextEditingController _explicacaoPraticaController;
   late TextEditingController _dicasDeUsoController;
 
+  String? _selectedTopico;
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     final data = widget.viewModel.initialData;
-    _topicoController = TextEditingController(text: data?.topico ?? '');
     _nomeController = TextEditingController(text: data?.nome ?? '');
     _categoriaController = TextEditingController(text: data?.categoria ?? '');
     _definicaoController = TextEditingController(text: data?.definicao ?? '');
@@ -49,7 +56,6 @@ class CardCustom4State extends State<CardCustom4> {
 
   @override
   void dispose() {
-    _topicoController.dispose();
     _nomeController.dispose();
     _categoriaController.dispose();
     _definicaoController.dispose();
@@ -67,7 +73,7 @@ class CardCustom4State extends State<CardCustom4> {
 
       final postModel = PostModel(
         id: widget.viewModel.initialData?.id ?? 0,
-        topico: _topicoController.text,
+        topico: _selectedTopico!,
         nome: _nomeController.text,
         categoria: _categoriaController.text,
         definicao: _definicaoController.text,
@@ -122,17 +128,36 @@ class CardCustom4State extends State<CardCustom4> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              IconTextRow(
-                iconModel: widget.viewModel.topicoIcon,
-                label: "",
-                text: _topicoController.text.isNotEmpty
-                    ? _topicoController.text
-                    : 'Novo tópico',
-                style: TextStyle(
-                  color: ThemeCardIconColorDarkblue,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20.0,
+              DropdownButtonFormField<String>(
+                value: _selectedTopico,
+                isExpanded: true,
+                decoration: InputDecoration(
+                  labelText: "Topico",
+                  border: const OutlineInputBorder(),
+                  prefixIcon:  IconCustom(viewModel: IconViewModel(icon: IconType.fixed, color: colorType.darkblue, size: IconSize.medium),),
                 ),
+                hint: const Text("Selecione um tópico"),
+                items: widget.topicos.map((String topico) {
+                  return DropdownMenuItem<String>(
+                    value: topico,
+                    child: Text(
+                      topico,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _selectedTopico = newValue;
+                  });
+                },
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "É obrigatorio selecionar um topico";
+                  }
+                  return null;
+                },
               ),
               const Divider(height: 10),
 
@@ -141,7 +166,7 @@ class CardCustom4State extends State<CardCustom4> {
                 label: "Categoria:",
                 controller: _categoriaController,
                 hintText: 'Categoria',
-                requiredField: false,
+                requiredField: true,
               ),
 
               IconTextFormFieldRow(
@@ -169,6 +194,7 @@ class CardCustom4State extends State<CardCustom4> {
                 controller: _explicacaoPraticaController,
                 hintText: 'Explicação prática',
                 maxLines: 3,
+                requiredField: true,
               ),
 
               IconTextFormFieldRow(

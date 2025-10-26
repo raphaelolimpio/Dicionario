@@ -22,6 +22,7 @@ enum colorType {
   orange,
   green,
   darkblue,
+  cyan,
 }
 
 enum IconSize { small, medium, large }

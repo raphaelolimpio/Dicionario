@@ -9,7 +9,9 @@ class CodeBlockFormField extends StatelessWidget {
   final String? hintText;
   final FormFieldValidator<String>? validator;
   final ValueChanged<String>? onChanged;
+  final TextInputType keyboardType;
   final bool enabled;
+  final bool autoGrow;
 
   const CodeBlockFormField({
     Key? key,
@@ -20,11 +22,17 @@ class CodeBlockFormField extends StatelessWidget {
     this.hintText,
     this.validator,
     this.onChanged,
+    this.keyboardType = TextInputType.text,
     this.enabled = true,
+    this.autoGrow = false,
+
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final effectiveKeyboard = autoGrow ? TextInputType.multiline : keyboardType;
+    final effectiveMaxLines = autoGrow ? null : maxLines;
+    final effectiveMinLines = autoGrow ? 1 : (maxLines > 1 ? 1 : null);
     return Container(
       padding: const EdgeInsets.all(12.0),
       margin: const EdgeInsets.only(top: 4.0, bottom: 16.0),
@@ -48,7 +56,9 @@ class CodeBlockFormField extends StatelessWidget {
           TextFormField(
             controller: controller,
             initialValue: controller == null ? initialValue : null,
-            maxLines: maxLines,
+            minLines: effectiveMinLines,
+            maxLines: effectiveMaxLines,
+            keyboardType: effectiveKeyboard,
             enabled: enabled,
             style: const TextStyle(
               color: WhiteTextColor,

@@ -138,8 +138,8 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                 if (apiResponse.statusCode >= 200 &&
                     apiResponse.statusCode < 300 &&
                     apiResponse.data != null) {
-                  final List<PostModel> products = apiResponse.data!;
-                  if (products.isEmpty) {
+                  final List<PostModel> termo = apiResponse.data!;
+                  if (termo.isEmpty) {
                     return const Center(
                       child: Text(
                         'Nenhum produto encontrado para esta categoria.',
@@ -147,7 +147,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                     );
                   }
                   final List<CardCustomViewModel> cardViewModels =
-                      _mapPostsToCardViewModels(products);
+                      _mapPostsToCardViewModels(termo);
                   return ListCard(
                     cards: cardViewModels,
                     cardModelType: CardModelType.cardCustom,

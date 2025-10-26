@@ -1,19 +1,17 @@
+import 'package:dicionario/DS/Components/Button/Favorite/Favorite_toggle_button.dart';
 import 'package:dicionario/DS/Components/Card/model/card_custom3/Card_custom3_view_model.dart';
-import 'package:dicionario/DS/Components/Reactive/Reactive.dart';
-import 'package:dicionario/Service/favorite_service.dart';
+import 'package:dicionario/DS/Components/IconText/Icon_Text.dart';
+import 'package:dicionario/DS/Components/bash/Code_Block.dart';
 import 'package:dicionario/shared/color.dart';
 import 'package:flutter/material.dart';
-
 
 class CardCustom3 extends StatefulWidget {
   final CardCustom3ViewModel viewModel;
   final double? cardWidth;
-  final VoidCallback? onFavortiteRemoved;
 
   const CardCustom3({
     super.key,
     required this.viewModel,
-    this.onFavortiteRemoved,
     this.cardWidth,
   });
 
@@ -22,8 +20,6 @@ class CardCustom3 extends StatefulWidget {
 }
 
 class _CardCustom3State extends State<CardCustom3> {
-  late Future<bool> _isFavoritedFuture;
-
 
   @override
   void initState() {
@@ -32,11 +28,8 @@ class _CardCustom3State extends State<CardCustom3> {
   }
 
   void _checkFavoriteStatus() {
-    _isFavoritedFuture = FavoriteService.isFavorite(widget.viewModel.id);
     setState(() {});
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -45,18 +38,18 @@ class _CardCustom3State extends State<CardCustom3> {
       child: Container(
         padding: const EdgeInsets.all(15.0),
         decoration: BoxDecoration(
-            color: WhiteTextColor,
-            border: Border.all(color: GrayBorderColor),
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: GrayBorderColor.withOpacity(0.08),
-                spreadRadius: 0,
-                blurRadius: 10,
-                offset: const Offset(0, 5),
-              ),
-            ],
-          ),
+          color: WhiteTextColor,
+          border: Border.all(color: GrayBorderColor),
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: GrayBorderColor.withOpacity(0.08),
+              spreadRadius: 0,
+              blurRadius: 10,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -64,77 +57,89 @@ class _CardCustom3State extends State<CardCustom3> {
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    widget.viewModel.topico,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: IconTextRow(
+                          iconModel: widget.viewModel.topicoIcon,
+                          label: "",
+                          text: widget.viewModel.topico,
+                          style: TextStyle(
+                            color: ThemeCardIconColorDarkblue,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20.0,
+                          ),
+                        ),
+                      ),
+                      FavoriteToggleButton(
+                        itemId: widget.viewModel.id,
+                        itemModel: widget.viewModel.toPostModel(),
+                        onFavoriteChanged: widget.viewModel.onFavoriteChanged,
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 4),
+                  const Divider(height: 10),
+                  IconTextRow(
+                    iconModel: widget.viewModel.categorIcon,
+                    label: "Categoria: ",
+                    text: widget.viewModel.nome,
+                    style: TextStyle(
+                      color: BlackTextColor,
+                      fontFamily: 'Roboto',
+                      fontSize: 16.0,
+                    ),
+                  ),
 
-                  Text(
-                    widget.viewModel.nome,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                  IconTextRow(
+                    iconModel: widget.viewModel.definicaoIcon,
+                    label: "Definição: ",
+                    text: widget.viewModel.definicao,
+                    style: TextStyle(
+                      color: BlackTextColor,
+                      fontFamily: 'Roboto',
+                      fontSize: 16.0,
+                    ),
+                  ),
+                  IconTextRow(
+                    iconModel: widget.viewModel.comandoExemploIcon,
+                    label: "Comando Exemplo: ",
+                    text: "",
+                  ),
+
+                  CodeBlock(code: widget.viewModel.comando_exemplo),
+
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all<Color>(
+                          BlueButtonColor,
+                        ),
+                        shape:
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                      ),
+                      onPressed: () =>
+                          widget.viewModel.onButtonPressed(context),
+                      child: Text(
+                        widget.viewModel.buttonText,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ),
                 ],
               ),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                FutureBuilder<bool>(
-                  future: _isFavoritedFuture,
-                  builder: (context, snapshot) {
-                    bool isFavorited = snapshot.data ?? false;
-                    return IconButton(
-                      icon: Icon(
-                        isFavorited ? Icons.favorite : Icons.favorite_border,
-                        color: Colors.red,
-                      ),
-                      onPressed: () async {
-                        if (isFavorited) {
-                          final removedItem =
-                              await FavoriteService.removeFavorite(
-                                widget.viewModel.id,
-                              );
-                          if (removedItem != null) {
-                            if (widget.onFavortiteRemoved != null) {
-                              widget.onFavortiteRemoved!();
-                            }
-                            Reactive.showUndoSnackBar(
-                              context: context,
-                              message: 'Item removido dos favoritos.',
-                              onUndo: () async {
-                                await FavoriteService.addFavorite(removedItem);
-                                _checkFavoriteStatus();
-                              },
-                            );
-                            _checkFavoriteStatus();
-                          }
-                        } else {
-                          await FavoriteService.addFavorite(
-                            widget.viewModel.toPostModel(),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Adicionado aos favoritos!'),
-                            ),
-                          );
-                          _checkFavoriteStatus();
-                        }
-                      },
-                      tooltip: isFavorited ? 'Desfavoritar' : 'Favoritar',
-                    );
-                  },
-                ),
-                
-              ],
             ),
           ],
         ),

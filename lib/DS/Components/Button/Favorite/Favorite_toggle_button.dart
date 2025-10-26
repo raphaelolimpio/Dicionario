@@ -1,16 +1,19 @@
-import 'package:dicionario/Config/model/Post_model.dart'; 
+import 'package:dicionario/Config/model/Post_model.dart';
 import 'package:dicionario/DS/Components/Reactive/Reactive.dart';
 import 'package:dicionario/Service/favorite_service.dart';
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
 
 class FavoriteToggleButton extends StatefulWidget {
   final int itemId;
-  final PostModel itemModel; 
+  final PostModel itemModel;
+  final VoidCallback? onFavoriteChanged;
+
   const FavoriteToggleButton({
     Key? key,
     required this.itemId,
     required this.itemModel,
+    this.onFavoriteChanged,
   }) : super(key: key);
 
   @override
@@ -18,79 +21,50 @@ class FavoriteToggleButton extends StatefulWidget {
 }
 
 class _FavoriteToggleButtonState extends State<FavoriteToggleButton> {
-  late Future<bool> _isFavoritedFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _checkFavoriteStatus();
-  }
-
-  void _checkFavoriteStatus() {
-    _isFavoritedFuture = FavoriteService.isFavorite(widget.itemId);
-  }
-
-  Future<void> _toggleFavorite(bool isCurrentlyFavorited) async {
+  Future<void> _toggleFavorite(
+    BuildContext context,
+    FavoriteService service,
+    bool isCurrentlyFavorited,
+  ) async {
     if (isCurrentlyFavorited) {
-
-      final removedItem = await FavoriteService.removeFavorite(widget.itemId);
-      if (removedItem != null && mounted) { 
+      final removedItem = await service.removeFavorite(widget.itemId);
+      if (removedItem != null && mounted) {
         Reactive.showUndoSnackBar(
           context: context,
           message: 'Item removido dos favoritos.',
           onUndo: () async {
-            await FavoriteService.addFavorite(removedItem);
-            if (mounted) {
-              setState(() {
-                _checkFavoriteStatus();
-              });
-            }
+            await service.addFavorite(removedItem);
           },
         );
       }
     } else {
-      await FavoriteService.addFavorite(widget.itemModel);
+      await service.addFavorite(widget.itemModel);
       if (mounted) {
-         ScaffoldMessenger.of(context).showSnackBar(
-           const SnackBar(
-             content: Text('Adicionado aos favoritos!'),
-             duration: Duration(seconds: 2), 
-           ),
-         );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Adicionado aos favoritos!'),
+            duration: Duration(seconds: 2),
+          ),
+        );
       }
-    }
-    if (mounted) {
-      setState(() {
-        _checkFavoriteStatus();
-      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<bool>(
-      future: _isFavoritedFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const IconButton(
-            icon: SizedBox(
-              width: 20, height: 20,
-              child: CircularProgressIndicator(strokeWidth: 2.0, color: Colors.red),
-            ),
-            onPressed: null, 
-          );
-        }
-        bool isFavorited = snapshot.hasData && snapshot.data == true;
-
-        return IconButton(
-          icon: Icon(
-            isFavorited ? Icons.favorite : Icons.favorite_border,
-            color: Colors.red,
-          ),
-          onPressed: () => _toggleFavorite(isFavorited), 
-          tooltip: isFavorited ? 'Desfavoritar' : 'Favoritar',
-        );
-      },
+    final favoriteService = context.watch<FavoriteService>();
+    final serviceForCallback = context.read<FavoriteService>();
+    bool isFavorited = favoriteService.isFavorite(widget.itemId);
+    return IconButton(
+      icon: Icon(
+        isFavorited ? Icons.favorite : Icons.favorite_border,
+        color: isFavorited ? Colors.red : Colors.grey,
+      ),
+      onPressed: () =>
+          _toggleFavorite(context, serviceForCallback, isFavorited),
+      tooltip: isFavorited
+          ? 'Remover dos favoritos'
+          : 'Adicionar aos favoritos',
     );
   }
 }

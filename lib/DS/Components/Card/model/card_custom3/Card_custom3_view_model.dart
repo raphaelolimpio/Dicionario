@@ -1,5 +1,6 @@
 import 'package:dicionario/Config/model/Post_model.dart';
 import 'package:dicionario/DS/Components/Card/BaseCard/base_Card.dart';
+import 'package:dicionario/DS/Components/Icons/Icon_view_Model.dart';
 import 'package:flutter/material.dart';
 
 class CardCustom3ViewModel extends BaseCardViewModel {
@@ -11,9 +12,16 @@ class CardCustom3ViewModel extends BaseCardViewModel {
   final String? comando_exemplo;
   final String explicacao_pratica;
   final String? dicas_de_uso;
-  final String? buttonText;
-  final void Function(BuildContext context)? onButtonPressed;
-  final VoidCallback? onFavortiteRemoved;
+  final String buttonText;
+  final void Function(BuildContext context) onButtonPressed;
+  final VoidCallback? onFavoriteChanged;
+
+  final IconViewModel? topicoIcon;
+  final IconViewModel? categorIcon;
+  final IconViewModel? definicaoIcon;
+  final IconViewModel? comandoExemploIcon;
+  final IconViewModel? explicacaoPraticaIcon;
+  final IconViewModel? dicasDeUsoIcon;
 
   CardCustom3ViewModel({
     required this.id,
@@ -24,9 +32,16 @@ class CardCustom3ViewModel extends BaseCardViewModel {
     this.comando_exemplo,
     required this.explicacao_pratica,
     this.dicas_de_uso,
-    this.buttonText,
+    required this.buttonText,
     required this.onButtonPressed,
-    this.onFavortiteRemoved,
+    this.onFavoriteChanged,
+
+    this.topicoIcon,
+    this.categorIcon,
+    this.definicaoIcon,
+    this.comandoExemploIcon,
+    this.explicacaoPraticaIcon,
+    this.dicasDeUsoIcon,
   });
   PostModel toPostModel() {
     return PostModel(

@@ -15,8 +15,6 @@ class ListCard extends StatelessWidget {
   final double? listHeight;
   final ScrollController? scrollController;
 
-  final VoidCallback? onFavortiteRemoved;
-
   const ListCard({
     super.key,
     required this.cards,
@@ -24,7 +22,6 @@ class ListCard extends StatelessWidget {
     this.displayMode = CardDisplayMode.verticalList,
     this.listHeight,
     this.scrollController,
-    this.onFavortiteRemoved,
   });
 
   @override
@@ -58,7 +55,6 @@ class ListCard extends StatelessWidget {
           if (viewModel is CardCustom3ViewModel) {
             return CardCustom3(
               viewModel: viewModel,
-              onFavortiteRemoved: onFavortiteRemoved,
               cardWidth: displayMode == CardDisplayMode.horizontalScroll
                   ? responsiveCardWidth
                   : null,

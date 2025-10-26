@@ -17,6 +17,7 @@ class CardCustom extends StatefulWidget {
 
 class _CardCustomState extends State<CardCustom> {
 
+
   
   @override
   void initState() {
@@ -25,7 +26,8 @@ class _CardCustomState extends State<CardCustom> {
   }
 
   void _checkFavoriteStatus() {
-    setState(() {});
+    setState(() {
+    });
   }
 
   @override

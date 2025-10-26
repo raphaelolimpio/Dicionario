@@ -1,17 +1,23 @@
 import 'package:flutter/material.dart';
 
 class Reactive {
-  static void showUndoSnackBar({
+  Reactive._();
+  static ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showUndoSnackBar({
     required BuildContext context,
     required String message,
     required VoidCallback onUndo,
+    Duration duration = const Duration(seconds: 5),
+    String undoLabel = 'Desfazer',
   }) {
-    ScaffoldMessenger.of(context).showSnackBar(
+    final messenger = ScaffoldMessenger.of(context);
+    messenger.clearSnackBars();
+    final controller = messenger.showSnackBar(
       SnackBar(
         content: Text(message),
-        duration: const Duration(seconds: 5),
-        action: SnackBarAction(label: 'Desfazer', onPressed: onUndo),
+        duration: duration,
+        action: SnackBarAction(label: undoLabel, onPressed: onUndo),
       ),
     );
+    return controller;
   }
 }

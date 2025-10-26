@@ -35,6 +35,19 @@ class DatabaseConfig {
         ''');
 
       },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (newVersion == 2) return;
+        await db.execute('''
+          CREATE TABLE favorites (
+            id INTEGER PRIMARY KEY,
+            title TEXT,
+            price REAL,
+            description TEXT,
+            category TEXT,
+            image TEXT
+          )
+        ''');
+      },
     );
   }
 }

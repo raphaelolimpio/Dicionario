@@ -27,7 +27,7 @@ class _PageHomeState extends State<PageHome> {
     setState(() {
       _selectedIndex = index;
       _selectedTermo = null;
-      _isShowingFavorites = (index == 1);
+      _isShowingFavorites = false;
 
     });
   }
@@ -41,13 +41,8 @@ class _PageHomeState extends State<PageHome> {
 
     void _showFavorites() {
     setState(() {
-      _isShowingFavorites = !_isShowingFavorites;
+      _isShowingFavorites = true;
       _selectedTermo = null;
-      if (_isShowingFavorites) {
-        _selectedIndex = 1;
-      } else if (_selectedIndex == 1) {
-        _selectedIndex = 0;
-      }
     });
   }
 
@@ -56,7 +51,7 @@ class _PageHomeState extends State<PageHome> {
       return DetalWidget(termo: _selectedTermo!);
     }
     if (_isShowingFavorites || _selectedIndex == 1) {
-      return FavorictWidget();
+      return FavorictWidget(onTermoSelected: _showTermoDetail,);
     }
     return HomeWidget(
       onTermoSelected: _showTermoDetail,

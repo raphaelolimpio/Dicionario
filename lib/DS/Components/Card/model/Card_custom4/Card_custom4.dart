@@ -5,6 +5,7 @@ import 'package:dicionario/DS/Components/Icons/Icon_Custom.dart';
 import 'package:dicionario/DS/Components/Icons/Icon_view_Model.dart';
 import 'package:dicionario/DS/Components/codeBlockForm/Code_block_form_field.dart';
 import 'package:dicionario/DS/Components/IconTextForm/icon_text_form_field_row.dart';
+import 'package:dicionario/Service/Validation_service.dart';
 import 'package:dicionario/shared/color.dart';
 import 'package:flutter/material.dart';
 
@@ -66,10 +67,36 @@ class CardCustom4State extends State<CardCustom4> {
   }
 
   Future<void> _submitForm() async {
-    if (_formKey.currentState?.validate() ?? false) {
-      setState(() {
-        _isLoading = true;
-      });
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    final String topicoParaValidar = _selectedTopico!;
+    final String nomeParaValidar = _nomeController.text;
+
+    try {
+      final validationResult = await ValidationService.isTermoDuplicate(
+        newTopico: topicoParaValidar,
+        newNome: nomeParaValidar,
+      );
+
+      if (validationResult.isDuplicate) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                validationResult.message ?? 'Este termo já existe.',
+              ),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        }
+        return;
+      }
 
       final postModel = PostModel(
         id: widget.viewModel.initialData?.id ?? 0,
@@ -85,20 +112,19 @@ class CardCustom4State extends State<CardCustom4> {
             ? _dicasDeUsoController.text
             : null,
       );
-      try {
-        await widget.viewModel.onSave(postModel);
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Erro ao salvar: $e')));
-        }
-      } finally {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
+
+      await widget.viewModel.onSave(postModel);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Erro ao salvar: $e')));
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -134,7 +160,13 @@ class CardCustom4State extends State<CardCustom4> {
                 decoration: InputDecoration(
                   labelText: "Topico",
                   border: const OutlineInputBorder(),
-                  prefixIcon:  IconCustom(viewModel: IconViewModel(icon: IconType.fixed, color: colorType.darkblue, size: IconSize.medium),),
+                  prefixIcon: IconCustom(
+                    viewModel: IconViewModel(
+                      icon: IconType.fixed,
+                      color: colorType.darkblue,
+                      size: IconSize.medium,
+                    ),
+                  ),
                 ),
                 hint: const Text("Selecione um tópico"),
                 items: widget.topicos.map((String topico) {
@@ -164,7 +196,7 @@ class CardCustom4State extends State<CardCustom4> {
               IconTextFormFieldRow(
                 iconModel: widget.viewModel.categorIcon,
                 label: "Categoria:",
-                controller: _categoriaController,
+                controller: _nomeController,
                 hintText: 'Categoria',
                 requiredField: true,
               ),

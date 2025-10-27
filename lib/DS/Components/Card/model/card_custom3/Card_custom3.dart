@@ -24,13 +24,7 @@ class _CardCustom3State extends State<CardCustom3> {
   @override
   void initState() {
     super.initState();
-    _checkFavoriteStatus();
   }
-
-  void _checkFavoriteStatus() {
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
     return Padding(

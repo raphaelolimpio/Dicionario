@@ -81,7 +81,7 @@ final autoGrow;
             enabled: enabled,
             validator: (value) {
               if (requiredField && (value == null || value.trim().isEmpty)) {
-                return 'Este campo é obrigatório';
+                return 'Este campo é obrigatório!';
               }
               if (validator != null) return validator!(value ?? '');
               return null;

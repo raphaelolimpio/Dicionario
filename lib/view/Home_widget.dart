@@ -9,28 +9,37 @@ import 'package:flutter/material.dart';
 
 class HomeWidget extends StatefulWidget {
   final void Function(PostModel)? onTermoSelected;
-  const HomeWidget({Key? key, this.onTermoSelected}) : super(key: key);
+  final String? searchTerm;
+  const HomeWidget({Key? key, this.onTermoSelected, this.searchTerm})
+    : super(key: key);
   @override
   State<StatefulWidget> createState() => _HomeWidgetState();
 }
 
 class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
-  late Future<ApiResponse<List<PostModel>>> _TermosFuture;
-  late Future<ApiResponse<List<String>>> _TopicoFuture;
+  late Future<ApiResponse<List<PostModel>>> _termosFuture;
+  late Future<ApiResponse<List<String>>> _topicoFuture;
   String? _selectedTopico;
 
   @override
   void initState() {
     super.initState();
     _fetchTermo();
-    _TopicoFuture = TopicoSevice.getAllTopico();
+    _topicoFuture = TopicoSevice.getAllTopico();
+  }
+
+  @override
+  void didUpdateWidget(covariant HomeWidget oldWidget){
+    super.didUpdateWidget(oldWidget);
+    if(widget.searchTerm != oldWidget.searchTerm){
+      _fetchTermo();
+    }
   }
 
   void _fetchTermo() {
     setState(() {
-      _TermosFuture = TopicoSevice.getTopicos(
-        topico: _selectedTopico 
-      );
+      _termosFuture = TopicoSevice.getTopicos(topico: _selectedTopico,
+      nome: widget.searchTerm);
     });
   }
 
@@ -82,26 +91,26 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: FutureBuilder<ApiResponse<List<String>>>(
-            future: _TopicoFuture,
+            future: _topicoFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError ||
                   !snapshot.hasData ||
                   snapshot.data!.data == null) {
-                return const Text('Não foi possível carregar categorias.');
+                return const Text('Não foi possível carregar Tópicos.');
               } else {
-                final categories = ['Todas', ...snapshot.data!.data!];
+                final categories = ['Todos', ...snapshot.data!.data!];
                 return DropdownButtonFormField<String>(
                   decoration: const InputDecoration(
-                    labelText: 'Filtrar por Categoria',
+                    labelText: 'Filtrar por Tópicos',
                     border: OutlineInputBorder(),
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: 12,
                       vertical: 8,
                     ),
                   ),
-                  value: _selectedTopico ?? 'Todas',
+                  value: _selectedTopico ?? 'Todos',
                   items: categories.map((String category) {
                     return DropdownMenuItem<String>(
                       value: category,
@@ -122,14 +131,14 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
         const Divider(height: 20, thickness: 1),
         Expanded(
           child: FutureBuilder<ApiResponse<List<PostModel>>>(
-            future: _TermosFuture,
+            future: _termosFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
               } else if (snapshot.hasError) {
                 return Center(
                   child: Text(
-                    'Erro ao carregar produtos: ${snapshot.error}',
+                    'Erro ao carregar Termo: ${snapshot.error}',
                     textAlign: TextAlign.center,
                   ),
                 );
@@ -141,9 +150,7 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
                   final List<PostModel> termo = apiResponse.data!;
                   if (termo.isEmpty) {
                     return const Center(
-                      child: Text(
-                        'Nenhum produto encontrado para esta categoria.',
-                      ),
+                      child: Text('Nenhum Termo encontrado para este Tópicos.'),
                     );
                   }
                   final List<CardCustomViewModel> cardViewModels =

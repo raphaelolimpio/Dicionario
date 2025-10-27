@@ -51,7 +51,7 @@ class ListCard extends StatelessWidget {
             );
           }
           return Text('Erro: ViewModel inesperado para Custom2 Card');
-        case CardModelType.CardCustom3:
+        case CardModelType.cardCustom3:
           if (viewModel is CardCustom3ViewModel) {
             return CardCustom3(
               viewModel: viewModel,

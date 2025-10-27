@@ -89,7 +89,7 @@ class CardCustom4State extends State<CardCustom4> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                validationResult.message ?? 'Este termo já existe.',
+                validationResult.message ?? 'Este termo já Existe.',
               ),
               backgroundColor: Colors.orange,
             ),
@@ -158,7 +158,7 @@ class CardCustom4State extends State<CardCustom4> {
                 value: _selectedTopico,
                 isExpanded: true,
                 decoration: InputDecoration(
-                  labelText: "Topico",
+                  labelText: "Tópico",
                   border: const OutlineInputBorder(),
                   prefixIcon: IconCustom(
                     viewModel: IconViewModel(
@@ -168,7 +168,7 @@ class CardCustom4State extends State<CardCustom4> {
                     ),
                   ),
                 ),
-                hint: const Text("Selecione um tópico"),
+                hint: const Text("Selecione um Tópico"),
                 items: widget.topicos.map((String topico) {
                   return DropdownMenuItem<String>(
                     value: topico,
@@ -186,7 +186,7 @@ class CardCustom4State extends State<CardCustom4> {
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return "É obrigatorio selecionar um topico";
+                    return "Obrigatorio Selecionar um Tópico";
                   }
                   return null;
                 },

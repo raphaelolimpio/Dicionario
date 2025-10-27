@@ -17,7 +17,7 @@ class FavorictWidget extends StatefulWidget {
 
 class _FavorictWidgetState extends State<FavorictWidget> {
   String? _selectedTopico;
-  static const String _allTopicsValue = "todos";
+  static const String _allTopicsValue = "Todos";
 
 
   List<CardCustom3ViewModel> _mapPostsToCardViewModels(List<PostModel> posts) {
@@ -114,7 +114,7 @@ class _FavorictWidgetState extends State<FavorictWidget> {
               if (allFavorites.isEmpty) {
                 return const Center(
                   child: Text(
-                    'Nenhum item favorito encontrado.',
+                    'Nenhum Termo Favorito Encontrado!',
                     style: TextStyle(fontSize: 18),
                   ),
                 );
@@ -122,7 +122,7 @@ class _FavorictWidgetState extends State<FavorictWidget> {
                 if(filteredFavorites.isEmpty){
                   return Center(
                     child: Text(
-                    'Nenhum item favorito para o tópico "$_selectedTopico".',
+                    'Nenhum Termo Favorito para o Tópico "$_selectedTopico".',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 18),
                   ),
@@ -132,7 +132,7 @@ class _FavorictWidgetState extends State<FavorictWidget> {
                     _mapPostsToCardViewModels(filteredFavorites);
                 return ListCard(
                   cards: cardViewModels,
-                  cardModelType: CardModelType.CardCustom3,
+                  cardModelType: CardModelType.cardCustom3,
                   displayMode: CardDisplayMode.verticalList,
                 );
             },

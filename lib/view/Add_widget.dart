@@ -17,6 +17,8 @@ class AddWidget extends StatefulWidget {
 class _AddWidgetState extends State<AddWidget> {
   late Future<ApiResponse<List<String>>> _topicosFuture;
 
+  Key _formCardKey = UniqueKey();
+
   @override
   void initState() {
     super.initState();
@@ -35,6 +37,9 @@ class _AddWidgetState extends State<AddWidget> {
             backgroundColor: Colors.green,
           ),
         );
+        setState(() {
+          _formCardKey = UniqueKey();
+        });
       } else {
         throw Exception('Falha ao salvar: ${response.statusCode}');
       }
@@ -62,7 +67,7 @@ class _AddWidgetState extends State<AddWidget> {
             snapshot.data!.data == null) {
           return Center(
             child: Text(
-              "Erro ao carregar os topicoz. \n${snapshot.error}",
+              "Erro ao carregar os tópico. \n${snapshot.error}",
               textAlign: TextAlign.center,
             ),
           );
@@ -70,7 +75,7 @@ class _AddWidgetState extends State<AddWidget> {
         final topicos = snapshot.data!.data!;
         if (topicos.isEmpty) {
           return const Center(
-            child: Text("Nenhum topico encontrado para adicionar termos."),
+            child: Text("Nenhum tópico encontrado para adicionar novos termos."),
           );
         }
 
@@ -78,6 +83,7 @@ class _AddWidgetState extends State<AddWidget> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: CardCustom4(
+              key: _formCardKey,
               topicos: topicos,
               viewModel: CardCustom4ViewModel(
                 buttonText: 'Adicionar Novo Termo',

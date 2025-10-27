@@ -31,7 +31,7 @@ class _FavoriteToggleButtonState extends State<FavoriteToggleButton> {
       if (removedItem != null && mounted) {
         Reactive.showUndoSnackBar(
           context: context,
-          message: 'Item removido dos favoritos.',
+          message: 'Termo Removido dos Favoritos.',
           onUndo: () async {
             await service.addFavorite(removedItem);
           },
@@ -42,7 +42,7 @@ class _FavoriteToggleButtonState extends State<FavoriteToggleButton> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Adicionado aos favoritos!'),
+            content: Text('Termo Adicionado aos Favoritos!'),
             duration: Duration(seconds: 2),
           ),
         );

@@ -17,6 +17,7 @@ class TopicoSevice extends ApiService {
 
   static Future<ApiResponse<List<PostModel>>> getTopicos({
     String? topico,
+    String? nome,
   }) async {
 
     final baseUrl = _getBaseUrl;
@@ -26,13 +27,18 @@ class TopicoSevice extends ApiService {
 
     String finalUrl;
     
-    if (topico != null && topico.isNotEmpty && topico != 'Todas') {
+    if (topico != null && topico.isNotEmpty && topico != 'Todos') {
       final topicoCodificado = Uri.encodeComponent(topico);
       finalUrl = "$baseUrl/comandos/topico/$topicoCodificado";
     } else {
       finalUrl = "$baseUrl/comandos";
     }
-    print("chamdno Api: $finalUrl");
+
+    if(nome != null && nome.isNotEmpty){
+      final nomeCodificado = Uri.encodeComponent(nome);
+      finalUrl += "?nome=$nomeCodificado";
+    }
+    print("chamando Api: $finalUrl");
 
     var response = await ApiService.request<List<PostModel>>(
       url: finalUrl,
@@ -69,4 +75,5 @@ class TopicoSevice extends ApiService {
     );
     return response;
   }
+
 }

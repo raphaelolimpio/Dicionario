@@ -6,8 +6,12 @@ import 'package:sqflite/sqflite.dart';
 class FavoriteService with ChangeNotifier {
   Future<Database> get _database async => await DatabaseConfig().database;
   List<PostModel> _favorites = [];
+  List<PostModel> _allFavorites = [];
+  List<String> _topics = [];
   bool _isLoading = true;
+
   List<PostModel> get favorites => _favorites;
+  List<String> get topics => _topics;
   bool get isLoading => _isLoading;
 
   FavoriteService() {
@@ -57,7 +61,25 @@ class FavoriteService with ChangeNotifier {
     final List<Map<String, dynamic>> maps = await db.query('favorites');
     _favorites = maps.map((e) => PostModel.fromJson(e)).toList();
 
+    _allFavorites = maps.map((e) => PostModel.fromJson(e)).toList();
+
+    _topics = _allFavorites.map((post) => post.topico).toSet().toList()..sort();
+
     _isLoading = false;
+    notifyListeners();
+  }
+
+  void applyFilters({String? topico, String? nome}){
+    var filtered = List<PostModel>.from(_allFavorites);
+    if(topico != null && topico.isNotEmpty && topico != "Todas" && topico != "todos"){
+      filtered = filtered.where((post) => post.topico == topico).toList();
+    }
+    if(nome != null && nome.isNotEmpty) {
+      final normalizedNome = nome.toLowerCase().trim();
+      filtered = filtered
+      .where((post) => (post.nome ?? "").toLowerCase().contains(normalizedNome)).toList();
+    }
+    _favorites = filtered;
     notifyListeners();
   }
 
@@ -70,8 +92,7 @@ class FavoriteService with ChangeNotifier {
       item.toJson(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
-    _favorites.add(item);
-    notifyListeners();
+    await loadFavorites();
   }
 
   Future<PostModel?> removeFavorite(int termoId) async {
@@ -91,8 +112,7 @@ class FavoriteService with ChangeNotifier {
 
     await db.delete('favorites', where: 'id = ?', whereArgs: [termoId]);
 
-    _favorites.removeWhere((post) => post.id == termoId);
-    notifyListeners();
+    await loadFavorites();
 
     return removed;
   }

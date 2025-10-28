@@ -24,22 +24,38 @@ class Seachview extends StatefulWidget {
 
 class _SearchViewState extends State<Seachview> {
   final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   Timer? _debounceTimer;
+  bool _showClearButton = false;
 
   @override
   void initState() {
     super.initState();
     _controller.text = widget.initialValue;
+    _showClearButton = _controller.text.isNotEmpty && _focusNode.hasFocus;
+    _controller.addListener(_updateClearButtonVisibility);
+    _focusNode.addListener(_updateClearButtonVisibility);
+  }
+
+  void _updateClearButtonVisibility() {
+    if (mounted) {
+      setState(() {
+        _showClearButton = _controller.text.isNotEmpty && _focusNode.hasFocus;
+      });
+    }
   }
 
   void _submitSearch() {
     widget.onSearchSubmitted(_controller.text);
-    FocusScope.of(context).unfocus();
+    _focusNode.unfocus();
   }
 
   @override
   void dispose() {
+    _controller.removeListener(_updateClearButtonVisibility);
+    _focusNode.removeListener(_updateClearButtonVisibility);
     _controller.dispose();
+    _focusNode.dispose();
     _debounceTimer?.cancel();
     super.dispose();
   }
@@ -80,21 +96,28 @@ class _SearchViewState extends State<Seachview> {
             child: TypeAheadField<PostModel>(
               controller: _controller,
               builder: (context, controller, focusNode) {
+                final localFocusNode = _focusNode;
                 return TextField(
                   controller: controller,
-                  focusNode: focusNode,
+                  focusNode: localFocusNode,
                   decoration: InputDecoration(
                     labelText: "Buscar Termo",
                     hintText: "Digite o nome do Termo...",
                     prefixIcon: const Icon(Icons.search),
                     border: const OutlineInputBorder(),
-                    suffixIcon: IconButton(
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.blue, width: 2.0),
+                    ),
+                    suffixIcon: _showClearButton
+                    ? IconButton(
                       icon: const Icon(Icons.clear, color: Colors.black),
+                      tooltip: "Limpar busca",
                       onPressed: () {
                         controller.clear();
                         widget.onSearchCleared();
                       },
-                    ),
+                    )
+                    : null,
                   ),
                   onSubmitted: (_) => _submitSearch(),
                 );
@@ -108,11 +131,12 @@ class _SearchViewState extends State<Seachview> {
               },
               onSelected: (suggestion) {
                 _controller.clear();
+                _focusNode.unfocus();
                 widget.onSearchSubmitted("");
                 widget.onSuggestionSelected(suggestion);
               },
               emptyBuilder: (context) {
-                return _controller.text.isNotEmpty
+                return _focusNode.hasFocus && _controller.text.isNotEmpty
                     ? const Padding(
                         padding: EdgeInsets.all(12.0),
                         child: Text("Nenhuma sugestão encontrada."),

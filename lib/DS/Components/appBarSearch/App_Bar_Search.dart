@@ -24,17 +24,35 @@ class AppBarSearch extends StatefulWidget {
 
 class _AppBarSearchState extends State<AppBarSearch> {
   final TextEditingController _controller = TextEditingController();
+  final FocusNode _focusNode  = FocusNode();
   bool _isExpanded = false;
 
   @override
   void initState() {
     super.initState();
     _controller.text = widget.initialValue;
+    _focusNode.addListener(_handleFocusChange);
+  }
+
+  @override
+  void dispose(){
+    _focusNode.removeListener(_handleFocusChange);
+    _focusNode.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _handleFocusChange(){
+    if(!_focusNode.hasFocus && _isExpanded){
+      setState(() {
+        _isExpanded = false;
+      });
+    }
   }
 
   void _submitSearch() {
     widget.onSearchSubmitted(_controller.text);
-    setState(() => _isExpanded = false);
+    _focusNode.unfocus();
   }
 
   @override
@@ -42,15 +60,20 @@ class _AppBarSearchState extends State<AppBarSearch> {
     if (!_isExpanded) {
       return IconButton(
         icon: const Icon(Icons.search),
-        onPressed: () => setState(() => _isExpanded = true),
+        onPressed: () {
+          setState(() => _isExpanded = true);
+          Future.delayed(const Duration(microseconds: 100),(){
+            _focusNode.requestFocus();
+          });
+        },
       );
     }
-
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.only(right: 8.0, left: 16.0),
         child: TypeAheadField<PostModel>(
           controller: _controller,
+          focusNode: _focusNode,
           builder: (context, controller, focusNode) {
             return TextField(
               controller: controller,
@@ -58,9 +81,14 @@ class _AppBarSearchState extends State<AppBarSearch> {
               autofocus: true,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white.withOpacity(0.12),
                 hintText: 'Buscar termo...',
                 hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
-                border: InputBorder.none,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  borderSide: BorderSide.none,
+                ),
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.clear, color: Colors.white),
                   onPressed: () {
@@ -81,6 +109,8 @@ class _AppBarSearchState extends State<AppBarSearch> {
             );
           },
           onSelected: (suggestion) {
+            _controller.clear();
+            setState(() => _isExpanded =  false);
             widget.onSuggestionSelected(suggestion);
           },
           emptyBuilder: (context) {

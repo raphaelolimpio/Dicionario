@@ -177,41 +177,46 @@ class _PageHomeState extends State<PageHome> {
     bool showSearch =
         _currentView == AppView.termo || _currentView == AppView.favorites;
 
-    return WillPopScope(
-      onWillPop: () async {
-        if (_currentView == AppView.detail || _currentView == AppView.add) {
-          _goBack();
-          return false;
-        }
-        return true;
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
       },
-      child: Scaffold(
-        appBar: CustomAppBar(
-          onShowFavorites: _showFavorites,
-          isFaroritePage: _isFaroritePage,
-          titleWidget: Image.asset(
-            'assets/logo.png',
-            height: 36.0,
-            alignment: AlignmentGeometry.center,
-            fit: BoxFit.contain,
+      child: WillPopScope(
+        onWillPop: () async {
+          if (_currentView == AppView.detail || _currentView == AppView.add) {
+            _goBack();
+            return false;
+          }
+          return true;
+        },
+        child: Scaffold(
+          appBar: CustomAppBar(
+            onShowFavorites: _showFavorites,
+            isFaroritePage: _isFaroritePage,
+            titleWidget: Image.asset(
+              'assets/logo.png',
+              height: 36.0,
+              alignment: AlignmentGeometry.center,
+              fit: BoxFit.contain,
+            ),
+            searchWidget: showSearch
+                ? AppBarSearch(
+                    initialValue: _searchTerm,
+                    onSuggestionSearch: _getSuggestions,
+                    onSuggestionSelected: _showTermoDetail,
+                    onSearchSubmitted: _onSwarchSubmitted,
+                    onSearchCleared: _onSearchCleared,
+                  )
+                : null,
           ),
-          searchWidget: showSearch
-              ? AppBarSearch(
-                  initialValue: _searchTerm,
-                  onSuggestionSearch: _getSuggestions,
-                  onSuggestionSelected: _showTermoDetail,
-                  onSearchSubmitted: _onSwarchSubmitted,
-                  onSearchCleared: _onSearchCleared,
-                )
-              : null,
-        ),
-        body: _buildBody(),
-        floatingActionButton: _buildFloatingButton(),
-        floatingActionButtonLocation: FloatingAddButton.defaultLocation,
-        bottomNavigationBar: ButtonNavigationBar(
-          items: _bottomNavItems,
-          selectedIndex: _selectedIndex,
-          onItemSelected: _onItemTapped,
+          body: _buildBody(),
+          floatingActionButton: _buildFloatingButton(),
+          floatingActionButtonLocation: FloatingAddButton.defaultLocation,
+          bottomNavigationBar: ButtonNavigationBar(
+            items: _bottomNavItems,
+            selectedIndex: _selectedIndex,
+            onItemSelected: _onItemTapped,
+          ),
         ),
       ),
     );

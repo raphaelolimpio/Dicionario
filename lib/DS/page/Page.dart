@@ -12,10 +12,11 @@ import 'package:dicionario/view/Add_widget.dart';
 import 'package:dicionario/view/Detail_widget.dart';
 import 'package:dicionario/view/Favorite_widget.dart';
 import 'package:dicionario/view/Home_widget.dart';
+import 'package:dicionario/view/Termo_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-enum AppView { home, favorites, add, detail }
+enum AppView { home, termo, favorites, add, detail }
 
 class PageHome extends StatefulWidget {
   const PageHome({super.key});
@@ -30,13 +31,20 @@ class _PageHomeState extends State<PageHome> {
   String _searchTerm = "";
 
   final List<ButtonNavigationBarViewModel> _bottomNavItems = [
-    ButtonNavigationBarViewModel(name: 'Home', icon: Icons.home),
+    ButtonNavigationBarViewModel(name: "Home", icon: Icons.home),
+    ButtonNavigationBarViewModel(name: 'Termos', icon: Icons.book),
     ButtonNavigationBarViewModel(name: 'Favoritos', icon: Icons.favorite),
   ];
 
   void _onItemTapped(int index) {
     setState(() {
-      _currentView = (index == 0) ? AppView.home : AppView.favorites;
+      if (index == 0) {
+        _currentView = AppView.home;
+      } else if (index == 1) {
+        _currentView = AppView.termo;
+      } else {
+        _currentView = AppView.favorites;
+      }
       _previousView = _currentView;
       _selectedTermo = null;
       _searchTerm = "";
@@ -45,10 +53,6 @@ class _PageHomeState extends State<PageHome> {
       }
     });
   }
-  
-
-
-
 
   void _showTermoDetail(PostModel termo) {
     setState(() {
@@ -60,23 +64,23 @@ class _PageHomeState extends State<PageHome> {
 
   void _showFavorites() {
     setState(() {
-      _currentView = AppView.favorites;
       _previousView = _currentView;
+      _currentView = AppView.favorites;
       _selectedTermo = null;
     });
   }
-
 
   void _goBack() {
     setState(() {
       _currentView = _previousView;
       _selectedTermo = null;
+      _searchTerm = "";
     });
   }
 
-    Future<List<PostModel>> _getSuggestions(String query) async {
+  Future<List<PostModel>> _getSuggestions(String query) async {
     if (query.isEmpty) return [];
-    if (_currentView == AppView.home) {
+    if (_currentView == AppView.termo) {
       final response = await TopicoSevice.getTopicos(nome: query);
       return response.data ?? [];
     } else if (_currentView == AppView.favorites) {
@@ -90,37 +94,40 @@ class _PageHomeState extends State<PageHome> {
     }
     return [];
   }
-  void _onSwarchSubmitted(String query){
+
+  void _onSwarchSubmitted(String query) {
     setState(() {
       _searchTerm = query;
     });
-    if(_currentView == AppView.favorites){
+    if (_currentView == AppView.favorites) {
       context.read<FavoriteService>().applyFilters(nome: query);
     }
   }
 
-  void _onSearchCleared(){
+  void _onSearchCleared() {
     setState(() {
       _searchTerm = "";
     });
-    if(_currentView == AppView.favorites){
+    if (_currentView == AppView.favorites) {
       context.read<FavoriteService>().applyFilters(nome: "");
     }
   }
 
-
   Widget _buildBody() {
     switch (_currentView) {
+      case AppView.home:
+        return HomeWidget(onTermoSelected: _showTermoDetail);
       case AppView.detail:
         return DetalWidget(termo: _selectedTermo!);
       case AppView.add:
         return const AddWidget();
       case AppView.favorites:
         return FavorictWidget(onTermoSelected: _showTermoDetail);
-      case AppView.home:
-        return HomeWidget(onTermoSelected: _showTermoDetail,
-        searchTerm: _searchTerm,);
-      
+      case AppView.termo:
+        return TermoWidget(
+          onTermoSelected: _showTermoDetail,
+          searchTerm: _searchTerm,
+        );
     }
   }
 
@@ -154,13 +161,22 @@ class _PageHomeState extends State<PageHome> {
 
     if (_currentView == AppView.home) {
       _selectedIndex = 0;
-    } else if (_currentView == AppView.favorites) {
+    } else if (_currentView == AppView.termo) {
       _selectedIndex = 1;
+    } else if (_currentView == AppView.favorites) {
+      _selectedIndex = 2;
     } else {
-      _selectedIndex = (_previousView == AppView.favorites) ? 1 : 0;
+      if (_previousView == AppView.termo) {
+        _selectedIndex = 1;
+      } else if (_previousView == AppView.favorites) {
+        _selectedIndex = 2;
+      } else {
+        _selectedIndex = 0;
+      }
     }
-    bool showSearch = _currentView == AppView.home || _currentView == AppView.favorites;
-    
+    bool showSearch =
+        _currentView == AppView.termo || _currentView == AppView.favorites;
+
     return WillPopScope(
       onWillPop: () async {
         if (_currentView == AppView.detail || _currentView == AppView.add) {
@@ -173,19 +189,21 @@ class _PageHomeState extends State<PageHome> {
         appBar: CustomAppBar(
           onShowFavorites: _showFavorites,
           isFaroritePage: _isFaroritePage,
-          titleWidget: Image.asset('assets/logo.png',
-          height: 36.0,
-          alignment: AlignmentGeometry.center,
-          fit: BoxFit.contain),
-          searchWidget: showSearch 
-          ? AppBarSearch(
-            initialValue: _searchTerm,
-            onSuggestionSearch: _getSuggestions,
-            onSuggestionSelected: _showTermoDetail,
-            onSearchSubmitted: _onSwarchSubmitted,
-            onSearchCleared: _onSearchCleared,
-          )
-          : null,
+          titleWidget: Image.asset(
+            'assets/logo.png',
+            height: 36.0,
+            alignment: AlignmentGeometry.center,
+            fit: BoxFit.contain,
+          ),
+          searchWidget: showSearch
+              ? AppBarSearch(
+                  initialValue: _searchTerm,
+                  onSuggestionSearch: _getSuggestions,
+                  onSuggestionSelected: _showTermoDetail,
+                  onSearchSubmitted: _onSwarchSubmitted,
+                  onSearchCleared: _onSearchCleared,
+                )
+              : null,
         ),
         body: _buildBody(),
         floatingActionButton: _buildFloatingButton(),

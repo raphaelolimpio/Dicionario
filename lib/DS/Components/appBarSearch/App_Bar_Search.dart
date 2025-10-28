@@ -26,17 +26,15 @@ class _AppBarSearchState extends State<AppBarSearch> {
   final TextEditingController _controller = TextEditingController();
   bool _isExpanded = false;
 
-
   @override
   void initState() {
     super.initState();
     _controller.text = widget.initialValue;
-    
   }
 
   void _submitSearch() {
     widget.onSearchSubmitted(_controller.text);
-    setState(()=> _isExpanded = false);
+    setState(() => _isExpanded = false);
   }
 
   @override

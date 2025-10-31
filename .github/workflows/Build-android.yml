@@ -1,27 +1,24 @@
 name: Build Flutter APK
 
 on:
-  # Isso permite que você inicie o build manualmente na aba "Actions"
   workflow_dispatch:
-
-  # Isso também vai gerar o APK quando você atualizar o branch 'main'
   push:
     branches:
       - main
-      - master # Remova esta linha se você não usa o branch 'master'
+      - master
 
 jobs:
   build-apk:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Baixa o seu código
+      # 1. Baixa o seu código (versão atualizada)
       - name: Checkout do Repositório
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # 2. Configura o Java (JDK 17)
+      # 2. Configura o Java (versão atualizada)
       - name: Configurar o Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
@@ -30,7 +27,7 @@ jobs:
       - name: Configurar o Flutter SDK
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable' 
+          channel: 'stable'
 
       # 4. Instala as dependências
       - name: Instalar Dependências
@@ -40,9 +37,9 @@ jobs:
       - name: Compilar APK
         run: flutter build apk --release
 
-      # 6. Salva o APK para download
+      # 6. Salva o APK (versão atualizada - A CORREÇÃO ESTÁ AQUI)
       - name: Fazer Upload do APK (Artefato)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: app-release.apk
           path: build/app/outputs/flutter-apk/app-release.apk

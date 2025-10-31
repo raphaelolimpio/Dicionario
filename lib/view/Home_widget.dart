@@ -10,7 +10,7 @@ class HomeWidget extends StatefulWidget {
   State<HomeWidget> createState() => _HomeWidgetState();
 }
 
-class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
+class _HomeWidgetState extends State<HomeWidget> {
   String _searchTerm = "";
 
   @override
@@ -40,32 +40,44 @@ class _HomeWidgetState extends State<HomeWidget> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              "Bem-Vindo ao Dicionário do Dev! ",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+           
+            const SizedBox(height:100),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                 Text(
+              "Bem-Vindo ao Dicionário do Dev!",
+              style: textTheme.headlineMedium?.copyWith(fontSize: 24),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 15),
-            const Text(
-              "Pesquise seu Termo",
-              style: TextStyle(fontSize: 18, color: Colors.grey),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 30),
-
+            const SizedBox(height: 20.0,),
+            
             Seachview(
               initialValue: _searchTerm,
               onSuggestionSelected: _handleSuggestionSelected,
               onSearchSubmitted: _handleSearchSubmitted,
               onSearchCleared: _onSearchCleared,
+
+            ), 
+            const SizedBox(height: 20.0),
+             Text(
+              "Explore o vocabulário do mundo DEV.",
+              style: textTheme.bodyLarge?.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
             ),
+            const SizedBox(height: 40),
+              ],
+            ),
+
+            
           ],
         ),
       ),

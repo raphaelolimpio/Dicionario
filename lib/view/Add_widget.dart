@@ -56,6 +56,7 @@ class _AddWidgetState extends State<AddWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final globalTheme = Theme.of(context);
     return FutureBuilder<ApiResponse<List<String>>>(
       future: _topicosFuture,
       builder: (context, snapshot) {
@@ -68,56 +69,64 @@ class _AddWidgetState extends State<AddWidget> {
           return Center(
             child: Text(
               "Erro ao carregar os tópico. \n${snapshot.error}",
-              textAlign: TextAlign.center,
+              textAlign: TextAlign.center, 
             ),
           );
         }
         final topicos = snapshot.data!.data!;
         if (topicos.isEmpty) {
           return const Center(
-            child: Text("Nenhum tópico encontrado para adicionar novos termos."),
+            child: Text(
+              "Nenhum tópico encontrado para adicionar novos termos.",
+            ),
           );
         }
-
-        return SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: CardCustom4(
-              key: _formCardKey,
-              topicos: topicos,
-              viewModel: CardCustom4ViewModel(
-                buttonText: 'Adicionar Novo Termo',
-                initialData: null,
-                onSave: _handleSave,
-                topicoIcon: IconViewModel(
-                  icon: IconType.fixed,
-                  color: colorType.darkblue,
-                  size: IconSize.medium,
-                ),
-                categorIcon: IconViewModel(
-                  icon: IconType.folder,
-                  color: colorType.yellow,
-                  size: IconSize.medium,
-                ),
-                definicaoIcon: IconViewModel(
-                  icon: IconType.definition,
-                  color: colorType.pink,
-                  size: IconSize.medium,
-                ),
-                comandoExemploIcon: IconViewModel(
-                  icon: IconType.bash,
-                  color: colorType.green,
-                  size: IconSize.medium,
-                ),
-                explicacaoPraticaIcon: IconViewModel(
-                  icon: IconType.dialog,
-                  color: colorType.cyan,
-                  size: IconSize.medium,
-                ),
-                dicasDeUsoIcon: IconViewModel(
-                  icon: IconType.dica,
-                  color: colorType.orange,
-                  size: IconSize.medium,
+        return Theme(
+          data: ThemeData.light().copyWith(
+            scaffoldBackgroundColor: globalTheme.scaffoldBackgroundColor,
+          ),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: CardCustom4(
+                key: _formCardKey,
+                topicos: topicos,
+                dropdownBackgroundColor: globalTheme.scaffoldBackgroundColor,
+                dropdownTextStyle: globalTheme.textTheme.bodyMedium,
+                viewModel: CardCustom4ViewModel(
+                  buttonText: 'Adicionar Novo Termo',
+                  initialData: null,
+                  onSave: _handleSave,
+                  topicoIcon: IconViewModel(
+                    icon: IconType.fixed,
+                    color: colorType.darkblue,
+                    size: IconSize.medium,
+                  ),
+                  categorIcon: IconViewModel(
+                    icon: IconType.folder,
+                    color: colorType.yellow,
+                    size: IconSize.medium,
+                  ),
+                  definicaoIcon: IconViewModel(
+                    icon: IconType.definition,
+                    color: colorType.pink,
+                    size: IconSize.medium,
+                  ),
+                  comandoExemploIcon: IconViewModel(
+                    icon: IconType.bash,
+                    color: colorType.green,
+                    size: IconSize.medium,
+                  ),
+                  explicacaoPraticaIcon: IconViewModel(
+                    icon: IconType.dialog,
+                    color: colorType.cyan,
+                    size: IconSize.medium,
+                  ),
+                  dicasDeUsoIcon: IconViewModel(
+                    icon: IconType.dica,
+                    color: colorType.orange,
+                    size: IconSize.medium,
+                  ),
                 ),
               ),
             ),

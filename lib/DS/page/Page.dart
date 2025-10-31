@@ -5,6 +5,7 @@ import 'package:dicionario/DS/Components/Button/ButtonNavigation/Button_navigati
 import 'package:dicionario/DS/Components/Button/ReturnButton/Return_Button.dart';
 import 'package:dicionario/DS/Components/appBar/Custom_appBar.dart';
 import 'package:dicionario/DS/Components/appBarSearch/App_Bar_Search.dart';
+import 'package:dicionario/DS/Components/theme/themeToggleButton/Theme_Toggle_Button.dart';
 import 'package:dicionario/Service/favorite_service.dart';
 import 'package:dicionario/Service/topico_sevice.dart';
 import 'package:dicionario/shared/color.dart';
@@ -29,6 +30,7 @@ class _PageHomeState extends State<PageHome> {
   AppView _previousView = AppView.home;
   PostModel? _selectedTermo;
   String _searchTerm = "";
+  bool _isSearchExpanded = false;
 
   final List<ButtonNavigationBarViewModel> _bottomNavItems = [
     ButtonNavigationBarViewModel(name: "Home", icon: Icons.home),
@@ -51,6 +53,7 @@ class _PageHomeState extends State<PageHome> {
       if (_currentView == AppView.home) {
         context.read<FavoriteService>().applyFilters(nome: "");
       }
+      _isSearchExpanded = false;
     });
   }
 
@@ -75,6 +78,7 @@ class _PageHomeState extends State<PageHome> {
       _currentView = _previousView;
       _selectedTermo = null;
       _searchTerm = "";
+      _isSearchExpanded = false;
     });
   }
 
@@ -193,12 +197,8 @@ class _PageHomeState extends State<PageHome> {
           appBar: CustomAppBar(
             onShowFavorites: _showFavorites,
             isFaroritePage: _isFaroritePage,
-            titleWidget: Image.asset(
-              'assets/logo.png',
-              height: 36.0,
-              alignment: AlignmentGeometry.center,
-              fit: BoxFit.contain,
-            ),
+            titleWidget:const ThemeToggleButton(),
+            isSearchExpanded: _isSearchExpanded,
             searchWidget: showSearch
                 ? AppBarSearch(
                     initialValue: _searchTerm,
@@ -206,6 +206,11 @@ class _PageHomeState extends State<PageHome> {
                     onSuggestionSelected: _showTermoDetail,
                     onSearchSubmitted: _onSwarchSubmitted,
                     onSearchCleared: _onSearchCleared,
+                    onExpansionChanged: (isExpanded){
+                      setState(() {
+                        _isSearchExpanded = isExpanded;
+                      });
+                    },
                   )
                 : null,
           ),

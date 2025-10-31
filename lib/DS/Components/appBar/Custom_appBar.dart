@@ -21,13 +21,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return AppBar(
-      backgroundColor: backgroundColor,
-      iconTheme: const IconThemeData(color: WhiteIconColor),
-      title: titleWidget ?? const Text(
-        "Dicononário de Dev",
-        style: TextStyle(color: Colors.white),
-      ),
+      backgroundColor: theme.appBarTheme.backgroundColor,
+      title: Visibility(
+        visible: !isSearchExpanded,
+        maintainSize: false,
+        maintainAnimation: false,
+        maintainState: false,
+        child: titleWidget ?? const SizedBox.shrink()),
       actions: [if (searchWidget != null) searchWidget!],
     );
   }

@@ -18,22 +18,25 @@ class ButtonNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationBar(
-      backgroundColor: appBarColor,
+    final theme = Theme.of(context);
+   return BottomNavigationBar(
+    backgroundColor: theme.bottomNavigationBarTheme.backgroundColor,
+      selectedItemColor: theme.bottomNavigationBarTheme.selectedItemColor,
+      unselectedItemColor: theme.bottomNavigationBarTheme.unselectedItemColor,
+
       items: items.map((viewModel) {
         return BottomNavigationBarItem(
           icon: Icon(viewModel.icon, size: 20,),
           label: viewModel.name, 
-          activeIcon: Icon(viewModel.icon, color: WhiteIconColor, size: 30,),
+          activeIcon: Icon(viewModel.icon, color: theme.bottomNavigationBarTheme.selectedItemColor, size: 30,),
           
         );
       }).toList(),
       currentIndex: selectedIndex,
       onTap: onItemSelected,
-      selectedItemColor: WhiteIconColor,
-      unselectedItemColor: BlackIconColor,
       selectedFontSize: 16,
       unselectedFontSize: 12,
+  
     );
   }
 }

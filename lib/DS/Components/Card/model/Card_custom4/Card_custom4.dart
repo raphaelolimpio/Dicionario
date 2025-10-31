@@ -13,11 +13,15 @@ class CardCustom4 extends StatefulWidget {
   final CardCustom4ViewModel viewModel;
   final List<String> topicos;
   final double? cardWidth;
+  final Color? dropdownBackgroundColor;
+  final TextStyle? dropdownTextStyle;
 
   const CardCustom4({
     super.key,
     required this.viewModel,
     this.cardWidth,
+    this.dropdownBackgroundColor,
+    this.dropdownTextStyle,
     required this.topicos,
   });
 
@@ -131,6 +135,7 @@ class CardCustom4State extends State<CardCustom4> {
 
   @override
   Widget build(BuildContext context) {
+    final localTheme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Container(
@@ -155,6 +160,8 @@ class CardCustom4State extends State<CardCustom4> {
             mainAxisSize: MainAxisSize.min,
             children: [
               DropdownButtonFormField<String>(
+                style: localTheme.textTheme.titleMedium,
+                dropdownColor: Theme.of(context).cardColor,
                 value: _selectedTopico,
                 isExpanded: true,
                 decoration: InputDecoration(
@@ -174,8 +181,7 @@ class CardCustom4State extends State<CardCustom4> {
                     value: topico,
                     child: Text(
                       topico,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      style:  localTheme.textTheme.titleMedium,
                     ),
                   );
                 }).toList(),

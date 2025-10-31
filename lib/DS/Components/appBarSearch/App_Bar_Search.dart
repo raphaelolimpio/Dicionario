@@ -8,6 +8,7 @@ class AppBarSearch extends StatefulWidget {
   final void Function(String query) onSearchSubmitted;
   final VoidCallback onSearchCleared;
   final String initialValue;
+  final void Function(bool isExpanded)? onExpansionChanged;
 
   const AppBarSearch({
     Key? key,
@@ -16,6 +17,7 @@ class AppBarSearch extends StatefulWidget {
     required this.onSearchSubmitted,
     required this.onSearchCleared,
     this.initialValue = "",
+    this.onExpansionChanged,
   }) : super(key: key);
 
   @override
@@ -55,13 +57,20 @@ class _AppBarSearchState extends State<AppBarSearch> {
     _focusNode.unfocus();
   }
 
+  void _setExpanded(bool isExpanded){
+    setState(() {
+      _isExpanded = isExpanded;
+    });
+    widget.onExpansionChanged?.call(isExpanded);
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!_isExpanded) {
       return IconButton(
         icon: const Icon(Icons.search),
         onPressed: () {
-          setState(() => _isExpanded = true);
+          _setExpanded(true);
           Future.delayed(const Duration(microseconds: 100),(){
             _focusNode.requestFocus();
           });
@@ -94,7 +103,7 @@ class _AppBarSearchState extends State<AppBarSearch> {
                   onPressed: () {
                     controller.clear();
                     widget.onSearchCleared();
-                    setState(() => _isExpanded = false);
+                    _setExpanded(false);
                   },
                 ),
               ),
@@ -109,9 +118,9 @@ class _AppBarSearchState extends State<AppBarSearch> {
             );
           },
           onSelected: (suggestion) {
-            _controller.clear();
-            setState(() => _isExpanded =  false);
             widget.onSuggestionSelected(suggestion);
+            _controller.clear();
+            _setExpanded(false);
           },
           emptyBuilder: (context) {
             return const Padding(

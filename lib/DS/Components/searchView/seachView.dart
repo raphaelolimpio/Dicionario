@@ -24,38 +24,26 @@ class Seachview extends StatefulWidget {
 
 class _SearchViewState extends State<Seachview> {
   final TextEditingController _controller = TextEditingController();
-  final FocusNode _focusNode = FocusNode();
+
   Timer? _debounceTimer;
-  bool _showClearButton = false;
 
   @override
   void initState() {
     super.initState();
     _controller.text = widget.initialValue;
-    _showClearButton = _controller.text.isNotEmpty && _focusNode.hasFocus;
-    _controller.addListener(_updateClearButtonVisibility);
-    _focusNode.addListener(_updateClearButtonVisibility);
-  }
-
-  void _updateClearButtonVisibility() {
-    if (mounted) {
-      setState(() {
-        _showClearButton = _controller.text.isNotEmpty && _focusNode.hasFocus;
-      });
-    }
   }
 
   void _submitSearch() {
     widget.onSearchSubmitted(_controller.text);
-    _focusNode.unfocus();
+    FocusScope.of(context).unfocus();
   }
+
 
   @override
   void dispose() {
-    _controller.removeListener(_updateClearButtonVisibility);
-    _focusNode.removeListener(_updateClearButtonVisibility);
+
     _controller.dispose();
-    _focusNode.dispose();
+
     _debounceTimer?.cancel();
     super.dispose();
   }
@@ -63,7 +51,7 @@ class _SearchViewState extends State<Seachview> {
   Future<List<PostModel>> _fetchSuggestions(String query) async {
     _debounceTimer?.cancel();
     final completer = Completer<List<PostModel>>();
-    _debounceTimer = Timer(const Duration(microseconds: 500), () async {
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () async {
       if (query.isEmpty) {
         completer.complete([]);
         return;
@@ -96,10 +84,10 @@ class _SearchViewState extends State<Seachview> {
             child: TypeAheadField<PostModel>(
               controller: _controller,
               builder: (context, controller, focusNode) {
-                final localFocusNode = _focusNode;
+
                 return TextField(
                   controller: controller,
-                  focusNode: localFocusNode,
+                  focusNode: focusNode,
                   decoration: InputDecoration(
                     labelText: "Buscar Termo",
                     hintText: "Digite o nome do Termo...",
@@ -108,16 +96,17 @@ class _SearchViewState extends State<Seachview> {
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.blue, width: 2.0),
                     ),
-                    suffixIcon: _showClearButton
-                    ? IconButton(
-                      icon: const Icon(Icons.clear, color: Colors.black),
-                      tooltip: "Limpar busca",
-                      onPressed: () {
-                        controller.clear();
-                        widget.onSearchCleared();
-                      },
-                    )
-                    : null,
+                    suffixIcon: controller.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear, color: Colors.black),
+                            tooltip: "limpar busca",
+                            onPressed: () {
+                              controller.clear();
+                              widget.onSearchCleared();
+                              focusNode.unfocus();
+                            },
+                          )
+                        : null,
                   ),
                   onSubmitted: (_) => _submitSearch(),
                 );
@@ -131,12 +120,14 @@ class _SearchViewState extends State<Seachview> {
               },
               onSelected: (suggestion) {
                 _controller.clear();
-                _focusNode.unfocus();
+                FocusScope.of(context).unfocus();
                 widget.onSearchSubmitted("");
                 widget.onSuggestionSelected(suggestion);
               },
               emptyBuilder: (context) {
-                return _focusNode.hasFocus && _controller.text.isNotEmpty
+                final currentFocusNode = FocusScope.of(context).focusedChild;
+                final hasFocus = currentFocusNode != null && currentFocusNode is FocusNode && currentFocusNode == FocusScope.of(context).focusedChild;
+                return hasFocus && _controller.text.isNotEmpty
                     ? const Padding(
                         padding: EdgeInsets.all(12.0),
                         child: Text("Nenhuma sugestão encontrada."),

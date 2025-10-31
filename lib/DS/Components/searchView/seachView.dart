@@ -126,7 +126,7 @@ class _SearchViewState extends State<Seachview> {
               },
               emptyBuilder: (context) {
                 final currentFocusNode = FocusScope.of(context).focusedChild;
-                final hasFocus = currentFocusNode != null && currentFocusNode is FocusNode && currentFocusNode == FocusScope.of(context).focusedChild;
+                final hasFocus = currentFocusNode != null  && currentFocusNode == FocusScope.of(context).focusedChild;
                 return hasFocus && _controller.text.isNotEmpty
                     ? const Padding(
                         padding: EdgeInsets.all(12.0),

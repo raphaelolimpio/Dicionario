@@ -1,5 +1,4 @@
 import 'package:dicionario/DS/Components/theme/Theme_Service.dart';
-import 'package:dicionario/DS/page/Page.dart';
 import 'package:dicionario/Service/favorite_service.dart';
 import 'package:dicionario/Splash_Screen/Splash_Screen.dart';
 import 'package:dicionario/shared/color.dart';

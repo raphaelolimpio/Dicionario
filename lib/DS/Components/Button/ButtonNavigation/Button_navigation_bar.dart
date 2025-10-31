@@ -1,5 +1,4 @@
 import 'package:dicionario/DS/Components/Button/ButtonNavigation/Button_navigation_bar_view_model.dart';
-import 'package:dicionario/shared/color.dart';
 import 'package:flutter/material.dart';
 
 

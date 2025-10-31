@@ -1,0 +1,44 @@
+name: Build Flutter APK
+
+on:
+  push:
+    branches:
+      - main # Dispara quando você der push no branch 'main'
+  workflow_dispatch: # Permite disparar manualmente pela aba "Actions"
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest # Usa uma máquina Linux
+
+    steps:
+      # 1. Baixa o seu código
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Configura o Java (necessário para o Android)
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # 3. Configura o Flutter
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable' # Ou a versão que você usa
+
+      # 4. Instala as dependências
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 5. Gera o APK de release
+      - name: Build APK
+        run: flutter build apk --release
+
+      # 6. Salva o APK gerado para você baixar
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release.apk
+          path: build/app/outputs/flutter-apk/app-release.apk

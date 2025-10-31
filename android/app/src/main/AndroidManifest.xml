@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<uses-permision android:name="Android.permision.INTERNET"/>
     <application
         android:label="Dicionário Dev"
         android:name="${applicationName}"

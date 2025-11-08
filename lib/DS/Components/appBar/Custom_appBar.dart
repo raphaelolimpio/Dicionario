@@ -8,6 +8,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget? searchWidget;
   final bool isSearchExpanded;
   final Widget? titleWidget;
+  final Border? brder;
 
   const CustomAppBar({
     super.key,
@@ -17,6 +18,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.searchWidget,
     this.isSearchExpanded = false,
     this.titleWidget,
+    this.brder
   });
 
   @override

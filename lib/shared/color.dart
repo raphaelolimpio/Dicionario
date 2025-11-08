@@ -3,8 +3,22 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 // Colors for system patterns
-const appBarColor = Color(0xFF0000FF);
-const backgroundColor = Color(0xFFF5F5F5);
+const appBarColor = Color(0xffffffff);
+const backgroundColor = Color(0xffF2F3F8);
+
+
+//theme ligth
+const iconNuttonNavigation = Color(0xff405de2);
+const iconSearch = Color(0xff4f70e1);
+const boardLigth = Color(0xffE0E0E0);
+
+//theme dark
+const icondarkNuttonNavigation = Color(0xFF141428);
+const iconInAtivoDark= Color(0xff6C7080);
+const iconAtivoDark = Color(0xff4FC3F7);
+const iconSearchDark = Colors.white;
+const backGroudDarkColor = Color(0xFF0C0C1A);
+
 
 // type button colors
 const RedButtonColor = Color(0xFFFF0000);

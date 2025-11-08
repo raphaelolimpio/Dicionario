@@ -1,7 +1,6 @@
 import 'package:dicionario/DS/Components/Button/ButtonNavigation/Button_navigation_bar_view_model.dart';
+import 'package:dicionario/shared/color.dart';
 import 'package:flutter/material.dart';
-
-
 
 class ButtonNavigationBar extends StatelessWidget {
   final List<ButtonNavigationBarViewModel> items;
@@ -18,24 +17,121 @@ class ButtonNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-   return BottomNavigationBar(
-    backgroundColor: theme.bottomNavigationBarTheme.backgroundColor,
-      selectedItemColor: theme.bottomNavigationBarTheme.selectedItemColor,
-      unselectedItemColor: theme.bottomNavigationBarTheme.unselectedItemColor,
 
-      items: items.map((viewModel) {
-        return BottomNavigationBarItem(
-          icon: Icon(viewModel.icon, size: 20,),
-          label: viewModel.name, 
-          activeIcon: Icon(viewModel.icon, color: theme.bottomNavigationBarTheme.selectedItemColor, size: 30,),
-          
-        );
-      }).toList(),
-      currentIndex: selectedIndex,
-      onTap: onItemSelected,
-      selectedFontSize: 16,
-      unselectedFontSize: 12,
-  
+    final Color activeColor = theme.primaryColor;
+    final Color inactiveColor =
+        theme.bottomNavigationBarTheme.unselectedItemColor ?? Colors.grey;
+    final Color shadowColor = theme.brightness == Brightness.light
+        ? Colors.black.withOpacity(0.1) 
+        : boardLigth;
+
+    return Stack(
+      
+      clipBehavior: Clip.none,
+      alignment: Alignment.bottomCenter,
+      children: [
+        Container(
+          height:90,
+          decoration: BoxDecoration(
+            color: theme.bottomNavigationBarTheme.backgroundColor,
+            boxShadow: [
+              BoxShadow(
+                color: shadowColor,
+                blurRadius: 12,
+                offset: const Offset(0, -2),
+
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: List.generate(items.length, (index) {
+              final item = items[index];
+              final bool isActive = index == selectedIndex;
+
+              return GestureDetector(
+                onTap: () => onItemSelected(index),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOutBack,
+                  transform: Matrix4.translationValues(
+                    0,
+                    isActive ? -25 : -15,
+                    0,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 250),
+                        curve: Curves.easeOut,
+                        decoration: BoxDecoration(
+                          color: isActive ? activeColor : Colors.transparent,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: isActive
+                              ? [
+                                  BoxShadow(
+                                    color: activeColor.withOpacity(0.4),
+                                    blurRadius: 15,
+                                    spreadRadius: 2,
+                                    offset: const Offset(0, 6),
+                                  ),
+                                ]
+                              : [],
+                        ),
+                        padding: const EdgeInsets.all(10),
+                        child: Icon(
+                          item.icon,
+                          color: isActive ? Colors.white : inactiveColor,
+                          size: 30,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      AnimatedDefaultTextStyle(
+                        duration: const Duration(milliseconds: 250),
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: isActive ? activeColor : inactiveColor,
+                          fontWeight: isActive
+                              ? FontWeight.w600
+                              : FontWeight.w400,
+                        ),
+                        child: Text(item.name),
+                      ),
+                   
+                    ],
+                  ),
+                ),
+              );
+            }),
+          ),
+        ),
+        Positioned.fill(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              if (selectedIndex < 0 || selectedIndex >= items.length) {
+                return const SizedBox.shrink();
+              }
+
+              final double itemWidth = constraints.maxWidth / items.length;
+              final double centerX =
+                  (itemWidth * selectedIndex) + (itemWidth / 2);
+
+              return IgnorePointer(
+                child: AnimatedPositioned(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOut,
+                  left: centerX - 30,
+                  bottom: 0,
+                  child: Container(width: 60, height: 20),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

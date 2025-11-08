@@ -139,7 +139,7 @@ class _PageHomeState extends State<PageHome> {
     if (_currentView == AppView.detail || _currentView == AppView.add) {
       return ReturnButton(
         onReturn: _goBack,
-        backgroundColor: appBarColor,
+        backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: WhiteIconColor,
       );
     }
@@ -152,7 +152,7 @@ class _PageHomeState extends State<PageHome> {
         });
       },
       icon: const Icon(Icons.add),
-      backgroundColor: appBarColor,
+      backgroundColor: Theme.of(context).primaryColor,
       foregroundColor: WhiteIconColor,
       tooltip: "Criar",
     );
@@ -197,7 +197,7 @@ class _PageHomeState extends State<PageHome> {
           appBar: CustomAppBar(
             onShowFavorites: _showFavorites,
             isFaroritePage: _isFaroritePage,
-            titleWidget:const ThemeToggleButton(),
+            titleWidget: const ThemeToggleButton(),
             isSearchExpanded: _isSearchExpanded,
             searchWidget: showSearch
                 ? AppBarSearch(
@@ -206,16 +206,23 @@ class _PageHomeState extends State<PageHome> {
                     onSuggestionSelected: _showTermoDetail,
                     onSearchSubmitted: _onSwarchSubmitted,
                     onSearchCleared: _onSearchCleared,
-                    onExpansionChanged: (isExpanded){
-                      setState(() {
-                        _isSearchExpanded = isExpanded;
+                    onExpansionChanged: (isExpanded) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        if (mounted) {
+                          setState(() {
+                            _isSearchExpanded = isExpanded;
+                          });
+                        }
                       });
                     },
                   )
                 : null,
           ),
           body: _buildBody(),
-          floatingActionButton: _buildFloatingButton(),
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.only(bottom: 20.0),
+            child: _buildFloatingButton(),
+          ),
           floatingActionButtonLocation: FloatingAddButton.defaultLocation,
           bottomNavigationBar: ButtonNavigationBar(
             items: _bottomNavItems,

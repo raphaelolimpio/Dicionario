@@ -31,22 +31,40 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             brightness: Brightness.light,
-            scaffoldBackgroundColor: const Color(0xFFF5F5F5),
-            primaryColor: appBarColor,
-
+            scaffoldBackgroundColor: backgroundColor,
+            primaryColor: iconNuttonNavigation,
+            inputDecorationTheme: InputDecorationTheme(
+              labelStyle: TextStyle(color: Colors.grey[700]),
+              hintStyle: TextStyle(color: Colors.grey[500]),
+              filled: true,
+              fillColor: Colors.black.withOpacity(0.04),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+                borderSide: BorderSide(width: 2),
+              ),
+            ),
             appBarTheme: const AppBarTheme(
               backgroundColor: appBarColor,
-              iconTheme: IconThemeData(color: WhiteIconColor),
+
+              iconTheme: IconThemeData(color: iconSearch),
               titleTextStyle: TextStyle(
-                color: WhiteIconColor,
+                color: iconNuttonNavigation,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
             bottomNavigationBarTheme: const BottomNavigationBarThemeData(
               backgroundColor: appBarColor,
-              selectedItemColor: WhiteIconColor,
-              unselectedItemColor: BlackIconColor,
+              selectedItemColor: iconNuttonNavigation,
+              unselectedItemColor: Colors.grey,
             ),
             textTheme: const TextTheme(
               titleMedium: TextStyle(color: Colors.black87),
@@ -63,28 +81,54 @@ class MyApp extends StatelessWidget {
           ),
           darkTheme: ThemeData(
             brightness: Brightness.dark,
-            primaryColor: const Color(0xFF1F1F1F),
-            scaffoldBackgroundColor: const Color(0xFF121212),
+            primaryColor: iconAtivoDark,
+            scaffoldBackgroundColor: backGroudDarkColor,
 
             appBarTheme: const AppBarTheme(
-              backgroundColor: Color(0xFF1F1F1F),
+              backgroundColor: icondarkNuttonNavigation,
               iconTheme: IconThemeData(color: WhiteIconColor),
-              titleTextStyle: TextStyle(color: WhiteIconColor, fontSize: 20, fontWeight: FontWeight.bold),
+              titleTextStyle: TextStyle(
+                color: WhiteIconColor,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-              backgroundColor: Color(0xff1f1f1f),
-              selectedItemColor: WhiteIconColor,
-              unselectedItemColor: Colors.grey,
+              backgroundColor: Color(0xFF1F1F1F),
+              selectedItemColor: iconAtivoDark,
+              unselectedItemColor: iconInAtivoDark,
             ),
             inputDecorationTheme: InputDecorationTheme(
               labelStyle: TextStyle(color: Colors.grey[400]),
-              hintStyle: TextStyle(color:Colors.grey[600]),
+              hintStyle: TextStyle(color: Colors.grey[600]),
+              filled: true,
+
+              fillColor: Colors.white.withOpacity(0.05),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.0),
+
+                borderSide: BorderSide(color: iconAtivoDark, width: 2),
+              ),
             ),
             textTheme: const TextTheme(
-              titleMedium: TextStyle(color: Colors.white), 
-              headlineMedium: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-              bodyMedium: TextStyle(color: Colors.white70, height: 1.4), 
-              bodyLarge: TextStyle(color: Colors.white, fontStyle: FontStyle.italic),
+              titleMedium: TextStyle(color: Colors.white),
+              headlineMedium: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+              bodyMedium: TextStyle(color: Color(0xffA0A0A0), height: 1.4),
+              bodyLarge: TextStyle(
+                color: Color(0xffB0B3C0),
+                fontStyle: FontStyle.italic,
+              ),
             ),
           ),
           themeMode: themeService.themeMode,

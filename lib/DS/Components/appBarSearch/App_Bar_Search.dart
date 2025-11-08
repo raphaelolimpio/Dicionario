@@ -88,7 +88,6 @@ class _AppBarSearchState extends State<AppBarSearch> {
               controller: controller,
               focusNode: focusNode,
               autofocus: true,
-              style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Colors.white.withOpacity(0.12),

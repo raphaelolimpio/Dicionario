@@ -11,6 +11,7 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
+.env
 
 
 # IntelliJ related
@@ -45,4 +46,3 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 # Arquivos de segredos e ambiente
-.env

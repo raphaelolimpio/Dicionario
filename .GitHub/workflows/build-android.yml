@@ -12,26 +12,32 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Baixa o seu código (versão atualizada)
       - name: Checkout do Repositório
         uses: actions/checkout@v4
 
+      # 2. Configura o Java (versão atualizada)
       - name: Configurar o Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
+      # 3. Configura o Flutter
       - name: Configurar o Flutter SDK
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
 
+      # 4. Instala as dependências
       - name: Instalar Dependências
         run: flutter pub get
 
+      # 5. Gera o APK de Release
       - name: Compilar APK
         run: flutter build apk --release
 
+      # 6. Salva o APK (versão atualizada - A CORREÇÃO ESTÁ AQUI)
       - name: Fazer Upload do APK (Artefato)
         uses: actions/upload-artifact@v4
         with:

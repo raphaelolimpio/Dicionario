@@ -7,6 +7,7 @@ import 'package:dicionario/DS/Components/appBar/Custom_appBar.dart';
 import 'package:dicionario/DS/Components/appBarSearch/App_Bar_Search.dart';
 import 'package:dicionario/DS/Components/theme/themeToggleButton/Theme_Toggle_Button.dart';
 import 'package:dicionario/Service/favorite_service.dart';
+import 'package:dicionario/Service/termo_service.dart';
 import 'package:dicionario/Service/topico_sevice.dart';
 import 'package:dicionario/shared/color.dart';
 import 'package:dicionario/view/Add_widget.dart';
@@ -24,6 +25,7 @@ class PageHome extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _PageHomeState();
 }
+
 
 class _PageHomeState extends State<PageHome> {
   AppView _currentView = AppView.home;
@@ -55,6 +57,17 @@ class _PageHomeState extends State<PageHome> {
       }
       _isSearchExpanded = false;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      if(mounted){
+    context.read<TermoService>().initialLoad();
+      }
+    });
+    
   }
 
   void _showTermoDetail(PostModel termo) {

@@ -1,5 +1,4 @@
 import 'package:dicionario/DS/Components/Button/ButtonNavigation/Button_navigation_bar_view_model.dart';
-import 'package:dicionario/shared/color.dart';
 import 'package:flutter/material.dart';
 
 class ButtonNavigationBar extends StatelessWidget {
@@ -21,17 +20,15 @@ class ButtonNavigationBar extends StatelessWidget {
     final Color activeColor = theme.primaryColor;
     final Color inactiveColor =
         theme.bottomNavigationBarTheme.unselectedItemColor ?? Colors.grey;
-    final Color shadowColor = theme.brightness == Brightness.light
-        ? Colors.black.withOpacity(0.1) 
-        : boardLigth;
+    final Color shadowColor = Colors.black.withOpacity(0.15);
+     
 
     return Stack(
-      
       clipBehavior: Clip.none,
       alignment: Alignment.bottomCenter,
       children: [
         Container(
-          height:90,
+          height: 90,
           decoration: BoxDecoration(
             color: theme.bottomNavigationBarTheme.backgroundColor,
             boxShadow: [
@@ -39,7 +36,6 @@ class ButtonNavigationBar extends StatelessWidget {
                 color: shadowColor,
                 blurRadius: 12,
                 offset: const Offset(0, -2),
-
               ),
             ],
           ),
@@ -73,7 +69,7 @@ class ButtonNavigationBar extends StatelessWidget {
                           boxShadow: isActive
                               ? [
                                   BoxShadow(
-                                    color: activeColor.withOpacity(0.4),
+                                    color: Colors.black.withOpacity(0.25),
                                     blurRadius: 15,
                                     spreadRadius: 2,
                                     offset: const Offset(0, 6),
@@ -100,7 +96,6 @@ class ButtonNavigationBar extends StatelessWidget {
                         ),
                         child: Text(item.name),
                       ),
-                   
                     ],
                   ),
                 ),
@@ -119,14 +114,18 @@ class ButtonNavigationBar extends StatelessWidget {
               final double centerX =
                   (itemWidth * selectedIndex) + (itemWidth / 2);
 
-              return IgnorePointer(
-                child: AnimatedPositioned(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeOut,
-                  left: centerX - 30,
-                  bottom: 0,
-                  child: Container(width: 60, height: 20),
-                ),
+              return Stack(
+                children: [
+                  AnimatedPositioned(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeOut,
+                    left: centerX - 30,
+                    bottom: 0,
+                    child: IgnorePointer(
+                      child: Container(width: 60, height: 20),
+                    ),
+                  ),
+                ],
               );
             },
           ),

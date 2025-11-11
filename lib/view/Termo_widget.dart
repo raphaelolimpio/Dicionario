@@ -1,11 +1,11 @@
 import 'package:dicionario/Config/model/Post_model.dart';
-import 'package:dicionario/Config/server/Api_service.dart';
 import 'package:dicionario/DS/Components/Card/BaseCard/Card_enum.dart';
 import 'package:dicionario/DS/Components/Card/ListCard/List_card_custom.dart';
 import 'package:dicionario/DS/Components/Card/model/card_custom/Card_custom_view_model.dart';
 import 'package:dicionario/DS/Components/Icons/Icon_view_Model.dart';
-import 'package:dicionario/Service/topico_sevice.dart';
+import 'package:dicionario/Service/termo_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class TermoWidget extends StatefulWidget {
   final void Function(PostModel)? onTermoSelected;
@@ -16,31 +16,26 @@ class TermoWidget extends StatefulWidget {
   State<StatefulWidget> createState() => _TermoWidgetState();
 }
 
-class _TermoWidgetState extends State<TermoWidget> with TickerProviderStateMixin {
-  late Future<ApiResponse<List<PostModel>>> _termosFuture;
-  late Future<ApiResponse<List<String>>> _topicoFuture;
-  String? _selectedTopico;
+class _TermoWidgetState extends State<TermoWidget>
+    with TickerProviderStateMixin {
 
   @override
-  void initState() {
-    super.initState();
-    _fetchTermo();
-    _topicoFuture = TopicoSevice.getAllTopico();
-  }
-
-  @override
-  void didUpdateWidget(covariant TermoWidget oldWidget){
+  void didUpdateWidget(covariant TermoWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if(widget.searchTerm != oldWidget.searchTerm){
-      _fetchTermo();
+    if (widget.searchTerm != oldWidget.searchTerm) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          final currentTopico = context
+              .read<TermoService>()
+              .selectedTopicoFilter;
+          _fetchTermo(topico: currentTopico, nome: widget.searchTerm);
+        }
+      });
     }
   }
 
-  void _fetchTermo() {
-    setState(() {
-      _termosFuture = TopicoSevice.getTopicos(topico: _selectedTopico,
-      nome: widget.searchTerm);
-    });
+  void _fetchTermo({String? topico, String? nome}) {
+    context.read<TermoService>().fetchTermos(topico: topico, nome: nome);
   }
 
   List<CardCustomViewModel> _mapPostsToCardViewModels(List<PostModel> posts) {
@@ -84,97 +79,85 @@ class _TermoWidgetState extends State<TermoWidget> with TickerProviderStateMixin
     }).toList();
   }
 
+  Widget _buildTryAgainButton(String message, VoidCallback onPressed) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: onPressed,
+            child: const Text('Tentar Novamente'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: FutureBuilder<ApiResponse<List<String>>>(
-            future: _topicoFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError ||
-                  !snapshot.hasData ||
-                  snapshot.data!.data == null) {
-                return const Text('Não foi possível carregar Tópicos.');
-              } else {
-                final categories = ['Todos', ...snapshot.data!.data!];
-                return DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(
-                    labelText: 'Filtrar por Tópicos',
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
-                    ),
+    final termoService = context.watch<TermoService>();
+    switch (termoService.pageState) {
+      case RequestState.loading:
+      case RequestState.idle:
+        return const Center(child: CircularProgressIndicator());
+      case RequestState.error:
+        return _buildTryAgainButton(
+          termoService.pageError ?? 'Ocorreu um erro.',
+          () => context.read<TermoService>().initialLoad(),
+        );
+      case RequestState.success:
+        final categories = ['Todos', ...termoService.topicosResponse!.data!];
+        return Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: DropdownButtonFormField(
+                decoration: const InputDecoration(
+                  labelText: 'Filtrar por Tópicos',
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
                   ),
-                  value: _selectedTopico ?? 'Todos',
-                  items: categories.map((String category) {
-                    return DropdownMenuItem<String>(
-                      value: category,
-                      child: Text(category),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedTopico = newValue;
-                      _fetchTermo();
-                    });
-                  },
-                );
-              }
-            },
-          ),
-        ),
-        const Divider(height: 20, thickness: 1),
-        Expanded(
-          child: FutureBuilder<ApiResponse<List<PostModel>>>(
-            future: _termosFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(
-                  child: Text(
-                    'Erro ao carregar Termo: ${snapshot.error}',
-                    textAlign: TextAlign.center,
-                  ),
-                );
-              } else if (snapshot.hasData) {
-                final apiResponse = snapshot.data!;
-                if (apiResponse.statusCode >= 200 &&
-                    apiResponse.statusCode < 300 &&
-                    apiResponse.data != null) {
-                  final List<PostModel> termo = apiResponse.data!;
-                  if (termo.isEmpty) {
-                    return const Center(
-                      child: Text('Nenhum Termo encontrado para este Tópicos.'),
-                    );
-                  }
-                  final List<CardCustomViewModel> cardViewModels =
-                      _mapPostsToCardViewModels(termo);
-                  return ListCard(
-                    cards: cardViewModels,
-                    cardModelType: CardModelType.cardCustom,
-                    displayMode: CardDisplayMode.verticalList,
-                    listHeight: 400,
+                ),
+                value: termoService.selectedTopicoFilter ?? 'Todos',
+                items: categories.map((String category) {
+                  return DropdownMenuItem(
+                    value: category,
+                    child: Text(category),
                   );
-                } else {
-                  return Center(
-                    child: Text(
-                      'Falha na API: ${apiResponse.statusCode} - $apiResponse',
-                      textAlign: TextAlign.center,
+                }).toList(),
+                onChanged: (String? newValue) {
+                  _fetchTermo(
+                    topico: newValue == 'Todos' ? null : newValue,
+                    nome: widget.searchTerm,
+                  );
+                },
+              ),
+            ),
+            const Divider(height: 20, thickness: 1),
+            Expanded(
+              child: termoService.termosResponse == null
+                  ? const Center(child: CircularProgressIndicator())
+                  : termoService.termosResponse!.data!.isEmpty
+                  ? const Center(child: Text('Nenhum Termo encontrado'))
+                  : ListCard(
+                      cards: _mapPostsToCardViewModels(
+                        termoService.termosResponse!.data!,
+                      ),
+                      cardModelType: CardModelType.cardCustom,
+                      displayMode: CardDisplayMode.verticalList,
+                      listHeight: 400,
                     ),
-                  );
-                }
-              }
-              return const Center(child: Text('Carregando...'));
-            },
-          ),
-        ),
-      ],
-    );
+            ),
+          ],
+        );
+    }
   }
 }

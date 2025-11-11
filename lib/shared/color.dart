@@ -10,11 +10,12 @@ const backgroundColor = Color(0xffF2F3F8);
 //theme ligth
 const iconNuttonNavigation = Color(0xff405de2);
 const iconSearch = Color(0xff4f70e1);
-const boardLigth = Color(0xffE0E0E0);
+const iconInAtivo= Color(0xFF8A9AAE);
+const boardLigth = Color.fromARGB(255, 22, 2, 2);
 
 //theme dark
-const icondarkNuttonNavigation = Color(0xFF141428);
-const iconInAtivoDark= Color(0xff6C7080);
+const icondarkNuttonNavigation = Color(0xFF1F1F1F);
+const iconInAtivoDark= Color(0xFF6E7D8B);
 const iconAtivoDark = Color(0xff4FC3F7);
 const iconSearchDark = Colors.white;
 const backGroudDarkColor = Color(0xFF0C0C1A);

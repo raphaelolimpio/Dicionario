@@ -42,6 +42,7 @@ dependencies:
   provider: ^6.1.5+1
   flutter_typeahead: ^5.2.0
   convex_bottom_bar: ^3.2.0
+  shared_preferences: ^2.5.3
 
 dev_dependencies:
   flutter_test:

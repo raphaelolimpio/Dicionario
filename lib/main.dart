@@ -1,5 +1,6 @@
 import 'package:dicionario/DS/Components/theme/Theme_Service.dart';
 import 'package:dicionario/Service/favorite_service.dart';
+import 'package:dicionario/Service/termo_service.dart';
 import 'package:dicionario/Splash_Screen/Splash_Screen.dart';
 import 'package:dicionario/shared/color.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => FavoriteService()),
         ChangeNotifierProvider(create: (context) => ThemeService()),
+        ChangeNotifierProvider(create: (context) => TermoService()),
       ],
       child: const MyApp(),
     ),
@@ -53,7 +55,7 @@ class MyApp extends StatelessWidget {
             ),
             appBarTheme: const AppBarTheme(
               backgroundColor: appBarColor,
-
+              surfaceTintColor: Colors.transparent,
               iconTheme: IconThemeData(color: iconSearch),
               titleTextStyle: TextStyle(
                 color: iconNuttonNavigation,
@@ -86,6 +88,7 @@ class MyApp extends StatelessWidget {
 
             appBarTheme: const AppBarTheme(
               backgroundColor: icondarkNuttonNavigation,
+              surfaceTintColor: Colors.transparent,
               iconTheme: IconThemeData(color: WhiteIconColor),
               titleTextStyle: TextStyle(
                 color: WhiteIconColor,

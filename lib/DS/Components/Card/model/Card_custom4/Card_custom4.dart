@@ -249,7 +249,7 @@ class CardCustom4State extends State<CardCustom4> {
                 child: ElevatedButton(
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.all<Color>(
-                      BlueButtonColor,
+                      primaryColor,
                     ),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(

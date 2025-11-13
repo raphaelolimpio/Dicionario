@@ -28,7 +28,7 @@ class ButtonNavigationBar extends StatelessWidget {
       alignment: Alignment.bottomCenter,
       children: [
         Container(
-          height: 90,
+          height: 65,
           decoration: BoxDecoration(
             color: theme.bottomNavigationBarTheme.backgroundColor,
             boxShadow: [
@@ -54,7 +54,7 @@ class ButtonNavigationBar extends StatelessWidget {
                   curve: Curves.easeOutBack,
                   transform: Matrix4.translationValues(
                     0,
-                    isActive ? -25 : -15,
+                    isActive ? -20 : -5,
                     0,
                   ),
                   child: Column(
@@ -84,18 +84,8 @@ class ButtonNavigationBar extends StatelessWidget {
                           size: 30,
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      AnimatedDefaultTextStyle(
-                        duration: const Duration(milliseconds: 250),
-                        style: TextStyle(
-                          fontSize: 15,
-                          color: isActive ? activeColor : inactiveColor,
-                          fontWeight: isActive
-                              ? FontWeight.w600
-                              : FontWeight.w400,
-                        ),
-                        child: Text(item.name),
-                      ),
+                     
+                      
                     ],
                   ),
                 ),

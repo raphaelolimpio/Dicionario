@@ -19,7 +19,6 @@ class _FavorictWidgetState extends State<FavorictWidget> {
   String? _selectedTopico;
   static const String _allTopicsValue = "Todos";
 
-
   List<CardCustom3ViewModel> _mapPostsToCardViewModels(List<PostModel> posts) {
     return posts.map((post) {
       return CardCustom3ViewModel(
@@ -68,49 +67,57 @@ class _FavorictWidgetState extends State<FavorictWidget> {
     final topicSet = allFavorites.map((post) => post.topico).toSet();
     final List<String> dropdownTopics = [
       _allTopicsValue,
-      ...topicSet.toList()..sort()
+      ...topicSet.toList()..sort(),
     ];
-    if(_selectedTopico != null && _selectedTopico != _allTopicsValue && !topicSet.contains(_selectedTopico)){
+    if (_selectedTopico != null &&
+        _selectedTopico != _allTopicsValue &&
+        !topicSet.contains(_selectedTopico)) {
       _selectedTopico = _allTopicsValue;
-      WidgetsBinding.instance.addPostFrameCallback((_){
-        if(mounted){
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
           setState(() {
             _selectedTopico = _allTopicsValue;
           });
         }
       });
     }
-    final List<PostModel> filteredFavorites = (_selectedTopico == null || _selectedTopico == _allTopicsValue)
-          ? allFavorites
-          :allFavorites.where((post) => post.topico == _selectedTopico).toList();
+    final List<PostModel> filteredFavorites =
+        (_selectedTopico == null || _selectedTopico == _allTopicsValue)
+        ? allFavorites
+        : allFavorites.where((post) => post.topico == _selectedTopico).toList();
     return Column(
       children: [
-        if(!favoriteService.isLoading && allFavorites.isNotEmpty)
-        Padding(padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
-        child: DropdownButtonFormField<String>(value:_selectedTopico ?? _allTopicsValue,
-        isExpanded: true,
-        decoration: const InputDecoration(labelText: "Filtrar por Tópico",
-        border: OutlineInputBorder(),),
-         items: dropdownTopics.map((String topic) {
-          return DropdownMenuItem<String>(
-            value: topic,
-            child: Text(topic, overflow: TextOverflow.ellipsis),
-            );
-         }).toList(),
-         onChanged: (String? newValue){
-          setState(() {
-            _selectedTopico = newValue;
-          });
+        if (!favoriteService.isLoading && allFavorites.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
+            child: DropdownButtonFormField<String>(
+              value: _selectedTopico ?? _allTopicsValue,
+              isExpanded: true,
+              decoration: const InputDecoration(
+                labelText: "Filtrar por Tópico",
+                border: OutlineInputBorder(),
+              ),
+              items: dropdownTopics.map((String topic) {
+                return DropdownMenuItem<String>(
+                  value: topic,
+                  child: Text(topic, overflow: TextOverflow.ellipsis),
+                );
+              }).toList(),
+              onChanged: (String? newValue) {
+                setState(() {
+                  _selectedTopico = newValue;
+                });
               },
             ),
-          ), 
+          ),
+         Divider(height: 20, thickness: 1,),
         Expanded(
           child: Builder(
             builder: (context) {
               if (favoriteService.isLoading) {
                 return const Center(child: CircularProgressIndicator());
               }
-              
+
               if (allFavorites.isEmpty) {
                 return const Center(
                   child: Text(
@@ -119,22 +126,22 @@ class _FavorictWidgetState extends State<FavorictWidget> {
                   ),
                 );
               }
-                if(filteredFavorites.isEmpty){
-                  return Center(
-                    child: Text(
+              if (filteredFavorites.isEmpty) {
+                return Center(
+                  child: Text(
                     'Nenhum Termo Favorito para o Tópico "$_selectedTopico".',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 18),
                   ),
-                  );
-                }
-                final List<CardCustom3ViewModel> cardViewModels =
-                    _mapPostsToCardViewModels(filteredFavorites);
-                return ListCard(
-                  cards: cardViewModels,
-                  cardModelType: CardModelType.cardCustom3,
-                  displayMode: CardDisplayMode.verticalList,
                 );
+              }
+              final List<CardCustom3ViewModel> cardViewModels =
+                  _mapPostsToCardViewModels(filteredFavorites);
+              return ListCard(
+                cards: cardViewModels,
+                cardModelType: CardModelType.cardCustom3,
+                displayMode: CardDisplayMode.verticalList,
+              );
             },
           ),
         ),

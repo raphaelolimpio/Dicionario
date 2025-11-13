@@ -26,7 +26,6 @@ class PageHome extends StatefulWidget {
   State<StatefulWidget> createState() => _PageHomeState();
 }
 
-
 class _PageHomeState extends State<PageHome> {
   AppView _currentView = AppView.home;
   AppView _previousView = AppView.home;
@@ -35,17 +34,17 @@ class _PageHomeState extends State<PageHome> {
   bool _isSearchExpanded = false;
 
   final List<ButtonNavigationBarViewModel> _bottomNavItems = [
-    ButtonNavigationBarViewModel(name: "Home", icon: Icons.home),
     ButtonNavigationBarViewModel(name: 'Termos', icon: Icons.book),
+    ButtonNavigationBarViewModel(name: "Home", icon: Icons.home),
     ButtonNavigationBarViewModel(name: 'Favoritos', icon: Icons.favorite),
   ];
 
   void _onItemTapped(int index) {
     setState(() {
       if (index == 0) {
-        _currentView = AppView.home;
-      } else if (index == 1) {
         _currentView = AppView.termo;
+      } else if (index == 1) {
+        _currentView = AppView.home;
       } else {
         _currentView = AppView.favorites;
       }
@@ -62,12 +61,11 @@ class _PageHomeState extends State<PageHome> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_){
-      if(mounted){
-    context.read<TermoService>().initialLoad();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<TermoService>().initialLoad();
       }
     });
-    
   }
 
   void _showTermoDetail(PostModel termo) {
@@ -176,14 +174,14 @@ class _PageHomeState extends State<PageHome> {
     int _selectedIndex;
     bool _isFaroritePage = _currentView == AppView.favorites;
 
-    if (_currentView == AppView.home) {
+    if (_currentView == AppView.termo) {
       _selectedIndex = 0;
-    } else if (_currentView == AppView.termo) {
+    } else if (_currentView == AppView.home) {
       _selectedIndex = 1;
     } else if (_currentView == AppView.favorites) {
       _selectedIndex = 2;
     } else {
-      if (_previousView == AppView.termo) {
+      if (_previousView == AppView.home) {
         _selectedIndex = 1;
       } else if (_previousView == AppView.favorites) {
         _selectedIndex = 2;
@@ -237,10 +235,13 @@ class _PageHomeState extends State<PageHome> {
             child: _buildFloatingButton(),
           ),
           floatingActionButtonLocation: FloatingAddButton.defaultLocation,
-          bottomNavigationBar: ButtonNavigationBar(
-            items: _bottomNavItems,
-            selectedIndex: _selectedIndex,
-            onItemSelected: _onItemTapped,
+          bottomNavigationBar: SafeArea(
+            top: false,
+            child: ButtonNavigationBar(
+              items: _bottomNavItems,
+              selectedIndex: _selectedIndex,
+              onItemSelected: _onItemTapped,
+            ),
           ),
         ),
       ),

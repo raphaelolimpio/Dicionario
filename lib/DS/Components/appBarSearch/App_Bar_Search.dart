@@ -26,7 +26,7 @@ class AppBarSearch extends StatefulWidget {
 
 class _AppBarSearchState extends State<AppBarSearch> {
   final TextEditingController _controller = TextEditingController();
-  final FocusNode _focusNode  = FocusNode();
+  final FocusNode _focusNode = FocusNode();
   bool _isExpanded = false;
 
   @override
@@ -37,15 +37,15 @@ class _AppBarSearchState extends State<AppBarSearch> {
   }
 
   @override
-  void dispose(){
+  void dispose() {
     _focusNode.removeListener(_handleFocusChange);
     _focusNode.dispose();
     _controller.dispose();
     super.dispose();
   }
 
-  void _handleFocusChange(){
-    if(!_focusNode.hasFocus && _isExpanded){
+  void _handleFocusChange() {
+    if (!_focusNode.hasFocus && _isExpanded) {
       setState(() {
         _isExpanded = false;
       });
@@ -57,7 +57,7 @@ class _AppBarSearchState extends State<AppBarSearch> {
     _focusNode.unfocus();
   }
 
-  void _setExpanded(bool isExpanded){
+  void _setExpanded(bool isExpanded) {
     setState(() {
       _isExpanded = isExpanded;
     });
@@ -66,12 +66,15 @@ class _AppBarSearchState extends State<AppBarSearch> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     if (!_isExpanded) {
-      return IconButton(
-        icon: const Icon(Icons.search),
+      return 
+      IconButton(
+        icon: Icon(Icons.search, color: theme.primaryColorDark),
+        iconSize: 25,
         onPressed: () {
           _setExpanded(true);
-          Future.delayed(const Duration(microseconds: 100),(){
+          Future.delayed(const Duration(microseconds: 100), () {
             _focusNode.requestFocus();
           });
         },
@@ -90,15 +93,24 @@ class _AppBarSearchState extends State<AppBarSearch> {
               autofocus: true,
               decoration: InputDecoration(
                 filled: true,
-                fillColor: Colors.white.withOpacity(0.12),
+                fillColor: theme.shadowColor.withOpacity(0.12),
                 hintText: 'Buscar termo...',
-                hintStyle: TextStyle(color: Colors.white.withOpacity(0.7)),
+                hintStyle: TextStyle(
+                  color: theme.primaryColorDark.withOpacity(0.7),
+                ),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
                   borderSide: BorderSide.none,
                 ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: theme.primaryColorDark,
+                    width: 1,
+                  ),
+                ),
                 suffixIcon: IconButton(
-                  icon: const Icon(Icons.clear, color: Colors.white),
+                  icon: Icon(Icons.clear, color: theme.primaryColorDark),
                   onPressed: () {
                     controller.clear();
                     widget.onSearchCleared();

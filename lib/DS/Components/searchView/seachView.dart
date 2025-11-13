@@ -31,6 +31,7 @@ class _SearchViewState extends State<Seachview> {
   void initState() {
     super.initState();
     _controller.text = widget.initialValue;
+    _controller.addListener(_onTextChanged);
   }
 
   void _submitSearch() {
@@ -38,12 +39,17 @@ class _SearchViewState extends State<Seachview> {
     FocusScope.of(context).unfocus();
   }
 
+  void _onTextChanged(){
+    setState(() {
+      
+    });
+  }
+
 
   @override
   void dispose() {
-
+    _controller.removeListener(_onTextChanged);
     _controller.dispose();
-
     _debounceTimer?.cancel();
     super.dispose();
   }
@@ -76,6 +82,7 @@ class _SearchViewState extends State<Seachview> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
@@ -91,14 +98,14 @@ class _SearchViewState extends State<Seachview> {
                   decoration: InputDecoration(
                     labelText: "Buscar Termo",
                     hintText: "Digite o nome do Termo...",
-                    prefixIcon: const Icon(Icons.search),
-                    border: const OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.search, color: theme.primaryColorDark),
+                    border:  OutlineInputBorder(),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blue, width: 2.0),
+                      borderSide: BorderSide(color: theme.primaryColorDark, width: 2.0),
                     ),
                     suffixIcon: controller.text.isNotEmpty
                         ? IconButton(
-                            icon: const Icon(Icons.clear, color: Colors.black),
+                            icon: Icon(Icons.clear, color: theme.primaryColorDark),
                             tooltip: "limpar busca",
                             onPressed: () {
                               controller.clear();

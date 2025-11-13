@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:dicionario/DS/page/Page.dart';
+import 'package:dicionario/shared/color.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -29,34 +30,33 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF004fff),
-      body: Stack(
-        children: [
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset('assets/logo.png', height: 300),
-                const SizedBox(height: 30),
-                CircularProgressIndicator(color: Colors.white),
-                const SizedBox(height: 20),
-              ],
-            ),
-          ),
-          Positioned(
-            bottom: 40, 
-            left: 0,
-            right: 0, 
-            child: Text(
-              "Desenvolvido por \n Raphael Olimpio A. P. Lima", 
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color:Colors.white, 
-                fontSize: 14,
+      backgroundColor: slpachColor,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset('assets/logo.png', height: 300),
+                  const SizedBox(height: 30),
+                  CircularProgressIndicator(color: Colors.white),
+                  const SizedBox(height: 20),
+                ],
               ),
             ),
-          ),
-        ],
+            Positioned(
+              bottom: 40,
+              left: 0,
+              right: 0,
+              child: Text(
+                "Desenvolvido por \n Raphael Olimpio A. P. Lima",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.white, fontSize: 16),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

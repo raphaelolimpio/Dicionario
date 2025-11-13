@@ -54,8 +54,13 @@ class _HomeWidgetState extends State<HomeWidget> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                  Text(
-              "Bem-Vindo ao Dicionário do Dev!",
-              style: textTheme.headlineMedium?.copyWith(fontSize: 24),
+              "Bem-Vindo ao",
+              style: textTheme.headlineMedium?.copyWith(fontSize: 30),
+              textAlign: TextAlign.center,
+            ),
+            Text(
+              "Dicionário do Dev.",
+              style: textTheme.bodySmall?.copyWith(fontSize: 30),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20.0,),

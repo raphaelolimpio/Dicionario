@@ -32,6 +32,7 @@ class _CardCustomState extends State<CardCustom> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: SizedBox(
@@ -40,11 +41,11 @@ class _CardCustomState extends State<CardCustom> {
           padding: const EdgeInsets.all(15.0),
           decoration: BoxDecoration(
             color: WhiteTextColor,
-            border: Border.all(color: GrayBorderColor),
+            border: Border.all(color: theme.dividerColor),
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: GrayBorderColor.withOpacity(0.08),
+                color: theme.shadowColor.withOpacity(0.08),
                 spreadRadius: 0,
                 blurRadius: 10,
                 offset: const Offset(0, 5),
@@ -65,7 +66,7 @@ class _CardCustomState extends State<CardCustom> {
                       label: "",
                       text: widget.viewModel.topico,
                       style: TextStyle(
-                        color: ThemeCardIconColorDarkblue,
+                        color: theme.shadowColor,
                         fontWeight: FontWeight.bold,
                         fontSize: 20.0,
                       ),
@@ -112,7 +113,7 @@ class _CardCustomState extends State<CardCustom> {
                 width: double.infinity,
                 child: ElevatedButton(
                   style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all<Color>(BlueButtonColor),
+                    backgroundColor: MaterialStateProperty.all<Color>(theme.primaryColor),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                       RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),

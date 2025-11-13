@@ -34,7 +34,8 @@ class MyApp extends StatelessWidget {
           theme: ThemeData(
             brightness: Brightness.light,
             scaffoldBackgroundColor: backgroundColor,
-            primaryColor: iconNuttonNavigation,
+            primaryColor: primaryColor,
+            primaryColorDark: BlackTextColor,
             inputDecorationTheme: InputDecorationTheme(
               labelStyle: TextStyle(color: Colors.grey[700]),
               hintStyle: TextStyle(color: Colors.grey[500]),
@@ -58,14 +59,14 @@ class MyApp extends StatelessWidget {
               surfaceTintColor: Colors.transparent,
               iconTheme: IconThemeData(color: iconSearch),
               titleTextStyle: TextStyle(
-                color: iconNuttonNavigation,
+                color: primaryColor,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
             bottomNavigationBarTheme: const BottomNavigationBarThemeData(
               backgroundColor: appBarColor,
-              selectedItemColor: iconNuttonNavigation,
+              selectedItemColor: primaryColor,
               unselectedItemColor: Colors.grey,
             ),
             textTheme: const TextTheme(
@@ -76,15 +77,20 @@ class MyApp extends StatelessWidget {
               ),
               bodyMedium: TextStyle(color: Colors.black54, height: 1.4),
               bodyLarge: TextStyle(
-                color: Colors.black87,
+                color: Colors.black54,
                 fontStyle: FontStyle.italic,
               ),
+              bodySmall: TextStyle(
+                color: primaryColor,
+                fontWeight: FontWeight.bold,
+              ), 
             ),
           ),
           darkTheme: ThemeData(
             brightness: Brightness.dark,
             primaryColor: iconAtivoDark,
             scaffoldBackgroundColor: backGroudDarkColor,
+            primaryColorDark: WhiteTextColor.withOpacity(0.8),
 
             appBarTheme: const AppBarTheme(
               backgroundColor: icondarkNuttonNavigation,
@@ -132,6 +138,10 @@ class MyApp extends StatelessWidget {
                 color: Color(0xffB0B3C0),
                 fontStyle: FontStyle.italic,
               ),
+              bodySmall: TextStyle(
+                color: iconAtivoDark,
+                fontWeight: FontWeight.bold,
+              ), 
             ),
           ),
           themeMode: themeService.themeMode,

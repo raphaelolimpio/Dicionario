@@ -5,14 +5,12 @@ import 'package:flutter/material.dart';
 // Colors for system patterns
 const appBarColor = Color(0xffffffff);
 const backgroundColor = Color(0xffF2F3F8);
-const primaryColor = Color(0xFF486cdf);
+const primaryColor = Color(0xff4c6fe3);
 const slpachColor = Color(0xff4c6fe3); 
 
 
 //theme ligth
-const iconNuttonNavigation = Color(0xff3f6bcc);
-const iconSearch = Color(0xff4f70e1);
-const iconInAtivo= Color(0xFF486cdf);
+
 const boardLigth = Color.fromARGB(255, 22, 2, 2);
 
 //theme dark

@@ -13,6 +13,7 @@ class ListCard extends StatelessWidget {
   final CardModelType cardModelType;
   final CardDisplayMode displayMode;
   final double? listHeight;
+  final ScrollController? controller;
   final ScrollController? scrollController;
 
   const ListCard({
@@ -21,6 +22,7 @@ class ListCard extends StatelessWidget {
     this.cardModelType = CardModelType.cardCustom,
     this.displayMode = CardDisplayMode.verticalList,
     this.listHeight,
+    this.controller,
     this.scrollController,
   });
 
@@ -66,6 +68,7 @@ class ListCard extends StatelessWidget {
 
     if (displayMode == CardDisplayMode.verticalList) {
       return ListView.builder(
+        controller: controller,
         padding: const EdgeInsets.all(8),
         itemCount: cards.length,
         itemBuilder: (context, index) {

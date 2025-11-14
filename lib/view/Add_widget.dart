@@ -1,3 +1,4 @@
+import 'package:dicionario/Config/cache/cache_topicos/Topico_Cache.dart';
 import 'package:dicionario/Config/model/Post_model.dart';
 import 'package:dicionario/Config/server/Api_service.dart';
 import 'package:dicionario/DS/Components/Card/model/Card_custom4/Card_custm4_view_model.dart';
@@ -19,10 +20,18 @@ class _AddWidgetState extends State<AddWidget> {
 
   Key _formCardKey = UniqueKey();
 
-  @override
   void initState() {
     super.initState();
-    _topicosFuture = TopicoSevice.getAllTopico();
+    if (TopicoCache.topicos == null) {
+      _topicosFuture = TopicoSevice.getAllTopico().then((res) {
+        TopicoCache.topicos = res.data;
+        return res;
+      });
+    } else {
+      _topicosFuture = Future.value(
+        ApiResponse(statusCode: 200, data: TopicoCache.topicos),
+      );
+    }
   }
 
   Future<void> _handleSave(PostModel postData) async {
@@ -57,6 +66,9 @@ class _AddWidgetState extends State<AddWidget> {
   @override
   Widget build(BuildContext context) {
     final globalTheme = Theme.of(context);
+    if (TopicoCache.topicos != null) {
+      return _buildContent(globalTheme, TopicoCache.topicos!);
+    }
     return FutureBuilder<ApiResponse<List<String>>>(
       future: _topicosFuture,
       builder: (context, snapshot) {
@@ -69,70 +81,70 @@ class _AddWidgetState extends State<AddWidget> {
           return Center(
             child: Text(
               "Erro ao carregar os tópico. \n${snapshot.error}",
-              textAlign: TextAlign.center, 
+              textAlign: TextAlign.center,
             ),
           );
         }
         final topicos = snapshot.data!.data!;
-        if (topicos.isEmpty) {
-          return const Center(
-            child: Text(
-              "Nenhum tópico encontrado para adicionar novos termos.",
-            ),
-          );
-        }
-        return Theme(
-          data: ThemeData.light().copyWith(
-            scaffoldBackgroundColor: globalTheme.scaffoldBackgroundColor,
-          ),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CardCustom4(
-                key: _formCardKey,
-                topicos: topicos,
-                dropdownBackgroundColor: globalTheme.scaffoldBackgroundColor,
-                dropdownTextStyle: globalTheme.textTheme.bodyMedium,
-                viewModel: CardCustom4ViewModel(
-                  buttonText: 'Adicionar Novo Termo',
-                  initialData: null,
-                  onSave: _handleSave,
-                  topicoIcon: IconViewModel(
-                    icon: IconType.fixed,
-                    color: colorType.darkblue,
-                    size: IconSize.medium,
-                  ),
-                  categorIcon: IconViewModel(
-                    icon: IconType.folder,
-                    color: colorType.yellow,
-                    size: IconSize.medium,
-                  ),
-                  definicaoIcon: IconViewModel(
-                    icon: IconType.definition,
-                    color: colorType.pink,
-                    size: IconSize.medium,
-                  ),
-                  comandoExemploIcon: IconViewModel(
-                    icon: IconType.bash,
-                    color: colorType.green,
-                    size: IconSize.medium,
-                  ),
-                  explicacaoPraticaIcon: IconViewModel(
-                    icon: IconType.dialog,
-                    color: colorType.cyan,
-                    size: IconSize.medium,
-                  ),
-                  dicasDeUsoIcon: IconViewModel(
-                    icon: IconType.dica,
-                    color: colorType.orange,
-                    size: IconSize.medium,
-                  ),
-                ),
+        return _buildContent(globalTheme, topicos);
+      },
+    );
+  }
+
+  Widget _buildContent(ThemeData globalTheme, List<String> topicos) {
+    if (topicos.isEmpty) {
+      return const Center(child: Text("Nenhum tópico encontrado"));
+    }
+    return Theme(
+      data: ThemeData.light().copyWith(
+        scaffoldBackgroundColor: globalTheme.scaffoldBackgroundColor,
+      ),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: CardCustom4(
+            key: _formCardKey,
+            topicos: topicos,
+            dropdownBackgroundColor: globalTheme.scaffoldBackgroundColor,
+            dropdownTextStyle: globalTheme.textTheme.bodyMedium,
+            viewModel: CardCustom4ViewModel(
+              buttonText: 'Adicionar Novo Termo',
+              initialData: null,
+              onSave: _handleSave,
+              topicoIcon: IconViewModel(
+                icon: IconType.fixed,
+                color: colorType.darkblue,
+                size: IconSize.medium,
+              ),
+              categorIcon: IconViewModel(
+                icon: IconType.folder,
+                color: colorType.yellow,
+                size: IconSize.medium,
+              ),
+              definicaoIcon: IconViewModel(
+                icon: IconType.definition,
+                color: colorType.pink,
+                size: IconSize.medium,
+              ),
+              comandoExemploIcon: IconViewModel(
+                icon: IconType.bash,
+                color: colorType.green,
+                size: IconSize.medium,
+              ),
+              explicacaoPraticaIcon: IconViewModel(
+                icon: IconType.dialog,
+                color: colorType.cyan,
+                size: IconSize.medium,
+              ),
+              dicasDeUsoIcon: IconViewModel(
+                icon: IconType.dica,
+                color: colorType.orange,
+                size: IconSize.medium,
               ),
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }

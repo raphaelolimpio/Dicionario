@@ -18,11 +18,62 @@ class TermoWidget extends StatefulWidget {
 
 class _TermoWidgetState extends State<TermoWidget>
     with TickerProviderStateMixin {
+  int _currentLimit = 20;
+  final ScrollController _scrollController = ScrollController();
+  bool _showLoadMoreButton = false;
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    final termoService = context.read<TermoService>();
+    final allPosts = termoService.termosResponse?.data ?? [];
+    final bool hasMore = allPosts.length > _currentLimit;
+
+    if (!hasMore) {
+      if (_showLoadMoreButton) {
+        setState(() => _showLoadMoreButton = false);
+      }
+      return;
+    }
+    final bool atBottom = _scrollController.position.atEdge &&
+        _scrollController.position.pixels != 0;
+
+    if (atBottom) {
+ 
+      if (!_showLoadMoreButton) {
+        setState(() {
+          _showLoadMoreButton = true;
+        });
+      }
+    } 
+    else {
+
+      if (_showLoadMoreButton) {
+        setState(() {
+          _showLoadMoreButton = false;
+        });
+      }
+    }
+  }
 
   @override
   void didUpdateWidget(covariant TermoWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.searchTerm != oldWidget.searchTerm) {
+      setState(() {
+        _currentLimit = 20;
+        _showLoadMoreButton = false;
+      });
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
           final currentTopico = context
@@ -113,6 +164,9 @@ class _TermoWidgetState extends State<TermoWidget>
         );
       case RequestState.success:
         final categories = ['Todos', ...termoService.topicosResponse!.data!];
+        final allPosts = termoService.termosResponse?.data ?? [];
+        final limitedPosts = allPosts.take(_currentLimit).toList();
+        final bool hasMore = allPosts.length > _currentLimit;
         return Column(
           children: [
             Padding(
@@ -134,6 +188,10 @@ class _TermoWidgetState extends State<TermoWidget>
                   );
                 }).toList(),
                 onChanged: (String? newValue) {
+                  setState(() {
+                    _currentLimit = 20;
+                    _showLoadMoreButton = false;
+                  });
                   _fetchTermo(
                     topico: newValue == 'Todos' ? null : newValue,
                     nome: widget.searchTerm,
@@ -141,20 +199,43 @@ class _TermoWidgetState extends State<TermoWidget>
                 },
               ),
             ),
+
             const Divider(height: 20, thickness: 1),
             Expanded(
-              child: termoService.termosResponse == null
-                  ? const Center(child: CircularProgressIndicator())
-                  : termoService.termosResponse!.data!.isEmpty
-                  ? const Center(child: Text('Nenhum Termo encontrado'))
-                  : ListCard(
-                      cards: _mapPostsToCardViewModels(
-                        termoService.termosResponse!.data!,
+              child: Column(
+                
+                children: [
+                  Expanded(child:
+                  termoService.termosResponse == null
+                      ? const Center(child: CircularProgressIndicator())
+                      : allPosts.isEmpty
+                      ? const Center(child: Text('Nenhum Termo encontrado'))
+                      : ListCard(
+                          cards: _mapPostsToCardViewModels(limitedPosts),
+                          cardModelType: CardModelType.cardCustom,
+                          displayMode: CardDisplayMode.verticalList,
+                          controller: _scrollController,
+                        ),
+                  ),
+
+                  if (_showLoadMoreButton && hasMore)
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).primaryColor,
+                        foregroundColor: Colors.white,),
+                        onPressed: () {
+                          setState(() {
+                            _currentLimit += 20;
+                            _showLoadMoreButton = false;
+                          });
+                        },
+                        child:  Text('Carregar Mais...', 
+                        style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
                       ),
-                      cardModelType: CardModelType.cardCustom,
-                      displayMode: CardDisplayMode.verticalList,
-                      listHeight: 400,
                     ),
+                ],
+              ),
             ),
           ],
         );

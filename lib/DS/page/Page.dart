@@ -34,17 +34,17 @@ class _PageHomeState extends State<PageHome> {
   bool _isSearchExpanded = false;
 
   final List<ButtonNavigationBarViewModel> _bottomNavItems = [
-    ButtonNavigationBarViewModel(name: 'Termos', icon: Icons.book),
     ButtonNavigationBarViewModel(name: "Home", icon: Icons.home),
+    ButtonNavigationBarViewModel(name: 'Termos', icon: Icons.book),
     ButtonNavigationBarViewModel(name: 'Favoritos', icon: Icons.favorite),
   ];
 
   void _onItemTapped(int index) {
     setState(() {
       if (index == 0) {
-        _currentView = AppView.termo;
-      } else if (index == 1) {
         _currentView = AppView.home;
+      } else if (index == 1) {
+        _currentView = AppView.termo;
       } else {
         _currentView = AppView.favorites;
       }
@@ -174,9 +174,9 @@ class _PageHomeState extends State<PageHome> {
     int _selectedIndex;
     bool _isFaroritePage = _currentView == AppView.favorites;
 
-    if (_currentView == AppView.termo) {
+    if (_currentView == AppView.home) {
       _selectedIndex = 0;
-    } else if (_currentView == AppView.home) {
+    } else if (_currentView == AppView.termo) {
       _selectedIndex = 1;
     } else if (_currentView == AppView.favorites) {
       _selectedIndex = 2;

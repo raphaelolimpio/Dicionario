@@ -1,3 +1,4 @@
+import 'package:dicionario/Config/cache/cache_termos/cache_termos.dart';
 import 'package:dicionario/Config/model/Post_model.dart';
 import 'package:dicionario/Config/server/Api_service.dart';
 import 'package:dicionario/Service/topico_sevice.dart';
@@ -35,20 +36,66 @@ class TermoService with ChangeNotifier {
   String? _lastTopico;
   String? _lastNome;
 
+  Future<void> _revalidateCache(String? topico, String? nome) async {
+    print("Cache: Revalidando dados em background...");
+    try {
+      final apiTopicos = await TopicoSevice.getAllTopico();
+      if (apiTopicos.data != null) {
+        _topicosResponse = apiTopicos;
+        TermosCache.saveTopicos(apiTopicos.data!);
+      }
+      final apiTermos = await TopicoSevice.getTopicos(
+        topico: topico,
+        nome: nome,
+      );
+      if (apiTermos.data != null) {
+        TermosCache.saveTermos(topico, nome, apiTermos.data!);
+        if (topico == _selectedTopicoFilter && nome == _lastNome) {
+          _termosResponse = apiTermos;
+          print("CAche: UI atualizada com dados de revalidação");
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      print("Cache: Falha na revalidação em background: $e");
+    }
+  }
+
   Future<void> initialLoad() async {
     _pageState = RequestState.loading;
     notifyListeners();
+
+    final cachedTopicos = TermosCache.getTopicos();
+    final cachedTermos = TermosCache.getTermos(null, null);
+
+    if (cachedTopicos != null && cachedTermos != null) {
+      print("Cache: Carregado com sucesso (Tópicos e Termos)");
+      _topicosResponse = ApiResponse(data: cachedTopicos, statusCode: 200);
+      _termosResponse = ApiResponse(data: cachedTermos, statusCode: 200);
+      _pageState = RequestState.success;
+      _topicosState = RequestState.success;
+      _termosState = RequestState.success;
+      notifyListeners();
+
+      _revalidateCache(null, null);
+      return;
+    }
+    print("Cache: vazio. Buscando da Api...");
+
     try {
       final topicoResult = await TopicoSevice.getAllTopico();
-      if (topicoResult.statusCode < 200 || topicoResult.statusCode >= 300) {
+      if (topicoResult.data == null)
         throw Exception("Falha ao carregar Tópicos");
-      }
       _topicosResponse = topicoResult;
+      TermosCache.saveTopicos(topicoResult.data!);
+      _topicosState = RequestState.success;
+
       final termoResult = await TopicoSevice.getTopicos();
-      if (termoResult.statusCode < 200 || termoResult.statusCode >= 300) {
+      if (termoResult.data == null)
         throw Exception("Falha ao carregar termos.");
-      }
       _termosResponse = termoResult;
+      TermosCache.saveTermos(null, null, termoResult.data!);
+      _termosState = RequestState.success;
       _pageState = RequestState.success;
     } catch (e) {
       _pageError = "Error ao carregar dadods";
@@ -61,11 +108,20 @@ class TermoService with ChangeNotifier {
     _topicosState = RequestState.loading;
     _topicosError = null;
     notifyListeners();
-
+    final cachedTopicos = TermosCache.getTopicos();
+    if (cachedTopicos != null) {
+      print("Cache: Tópicos (avulso) carregados.");
+      _topicosResponse = ApiResponse(data: cachedTopicos, statusCode: 200);
+      _topicosState = RequestState.success;
+      notifyListeners();
+      _revalidateCache(null, null);
+      return;
+    }
     try {
       final response = await TopicoSevice.getAllTopico();
-      if (response.statusCode >= 200 && response.statusCode < 300) {
+      if (response.data != null) {
         _topicosResponse = response;
+        TermosCache.saveTopicos(response.data!);
         _topicosState = RequestState.success;
       } else {
         _topicosError = "Falha ao buscar Tópicos: ${response.statusCode}";
@@ -85,13 +141,24 @@ class TermoService with ChangeNotifier {
     _termosError = null;
     notifyListeners();
 
+    final cachedTermos = TermosCache.getTermos(topico, nome);
+    if (cachedTermos != null) {
+      print("Cache: Filtro carregado ($topico, $nome).");
+      _termosResponse = ApiResponse(data: cachedTermos, statusCode: 200);
+      _termosState = RequestState.success;
+      notifyListeners();
+      _revalidateCache(topico, nome);
+      return;
+    }
+    print("Cache: Filtro ($topico, $nome) vazio. Buscando da API...");
     try {
       final response = await TopicoSevice.getTopicos(
         topico: topico,
         nome: nome,
       );
-      if (response.statusCode >= 200 && response.statusCode < 300) {
+      if (response.data != null) {
         _termosResponse = response;
+        TermosCache.saveTermos(topico, nome, response.data!);
         _termosState = RequestState.success;
       } else {
         _termosError = "Falha ao buscar termos.";

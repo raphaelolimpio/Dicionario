@@ -8257,7 +8257,7 @@ var $async$axS=A.I(function(a,b){if(a===1)return A.K(b,r)
 while(true)switch(s){case 0:if($.a_==null)A.aAh()
 $.a_.toString
 s=2
-return A.P($.Je().v0(0,".env"),$async$axS)
+return A.P($.Je().v0(0,"assets/env"),$async$axS)
 case 2:q=A.aPJ(B.Me,A.c([A.ayG(new A.axV(),t.Nl),A.ayG(new A.axW(),t.qN),A.ayG(new A.axX(),t.hG)],t.Ds))
 if($.a_==null)A.aAh()
 p=$.a_
